@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospital Vida Saudável — Luanda, Angola</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-plus"></i></span>
+        <span class="logo-text">Vida Saudável</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Início</a></li>
+        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="medicos.html">Médicos</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="tel:+244900000000" class="nav-phone"><i class="fa-solid fa-phone"></i> +244 900 000 000</a>
+        <a href="marcacao.html" class="btn-consulta">Marcar Consulta</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80" alt="Hospital" />
+      <div class="hero-gradient"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge"><span class="pulse-dot"></span> Urgência 24h disponível</div>
+      <h1>Cuidando da sua saúde<br>com <em>excelência</em> e<br>dedicação</h1>
+      <p>Referência em saúde em Luanda há mais de 20 anos. Tecnologia avançada, equipa especializada e atendimento humanizado.</p>
+      <div class="hero-ctas">
+        <a href="marcacao.html" class="btn-primary">Agendar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="servicos.html" class="btn-ghost">Ver Serviços</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hstat-num">15k+</span><span class="hstat-lbl">Pacientes</span></div>
+      <div class="hstat-div"></div>
+      <div class="hstat"><span class="hstat-num">40+</span><span class="hstat-lbl">Especialistas</span></div>
+      <div class="hstat-div"></div>
+      <div class="hstat"><span class="hstat-num">12</span><span class="hstat-lbl">Especialidades</span></div>
+      <div class="hstat-div"></div>
+      <div class="hstat"><span class="hstat-num">20+</span><span class="hstat-lbl">Anos de Exp.</span></div>
+    </div>
+  </section>
+
+  <!-- SERVICES PREVIEW -->
+  <section class="services-preview section-pad">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">O que oferecemos</span>
+        <h2 class="section-title">Especialidades <em>médicas</em></h2>
+        <p class="section-sub">Cuidados completos para toda a família com tecnologia de ponta.</p>
+      </div>
+      <div class="services-grid">
+        <a href="servicos.html#cardiologia" class="svc-card">
+          <div class="svc-icon-wrap" style="--c:#e53935;--cb:rgba(229,57,53,0.1)"><i class="fa-solid fa-heart-pulse"></i></div>
+          <h3>Cardiologia</h3>
+          <p>Diagnóstico e tratamento de doenças cardíacas com equipamentos avançados.</p>
+          <span class="svc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a href="servicos.html#pediatria" class="svc-card">
+          <div class="svc-icon-wrap" style="--c:#f9a825;--cb:rgba(249,168,37,0.1)"><i class="fa-solid fa-baby"></i></div>
+          <h3>Pediatria</h3>
+          <p>Cuidado integral das crianças com atenção, carinho e profissionalismo.</p>
+          <span class="svc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a href="servicos.html#laboratorio" class="svc-card">
+          <div class="svc-icon-wrap" style="--c:#1565c0;--cb:rgba(21,101,192,0.1)"><i class="fa-solid fa-flask"></i></div>
+          <h3>Laboratório</h3>
+          <p>Análises clínicas precisas e rápidas para diagnóstico seguro e eficiente.</p>
+          <span class="svc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a href="servicos.html#urgencia" class="svc-card">
+          <div class="svc-icon-wrap" style="--c:#00897b;--cb:rgba(0,137,123,0.1)"><i class="fa-solid fa-truck-medical"></i></div>
+          <h3>Urgência 24h</h3>
+          <p>Atendimento médico de urgência disponível 24 horas, todos os dias.</p>
+          <span class="svc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a href="servicos.html#ortopedia" class="svc-card">
+          <div class="svc-icon-wrap" style="--c:#6d4c41;--cb:rgba(109,76,65,0.1)"><i class="fa-solid fa-bone"></i></div>
+          <h3>Ortopedia</h3>
+          <p>Tratamento de lesões e doenças musculo-esqueléticas com tecnologia moderna.</p>
+          <span class="svc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+        <a href="servicos.html#neurologia" class="svc-card">
+          <div class="svc-icon-wrap" style="--c:#7b1fa2;--cb:rgba(123,31,162,0.1)"><i class="fa-solid fa-brain"></i></div>
+          <h3>Neurologia</h3>
+          <p>Diagnóstico e tratamento de doenças neurológicas com especialistas experientes.</p>
+          <span class="svc-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+      </div>
+      <div class="center-action">
+        <a href="servicos.html" class="btn-outline">Ver todas as especialidades <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-us section-pad bg-dark-alt">
+    <div class="container">
+      <div class="why-grid">
+        <div class="why-img">
+          <img src="https://images.unsplash.com/photo-1551190822-a9333d879b1f?w=700&q=80" alt="Tecnologia médica"/>
+          <div class="why-badge">
+            <i class="fa-solid fa-award"></i>
+            <div><strong>Hospital Certificado</strong><span>ISO 9001:2015</span></div>
+          </div>
+        </div>
+        <div class="why-content">
+          <span class="section-tag">Por que nos escolher</span>
+          <h2 class="section-title">Compromisso com a sua <em>saúde</em></h2>
+          <p class="why-desc">No Hospital Vida Saudável, cada paciente é tratado com máxima atenção e respeito. Combinamos tecnologia de ponta com um atendimento verdadeiramente humano.</p>
+          <div class="why-list">
+            <div class="why-item">
+              <span class="why-icon"><i class="fa-solid fa-microscope"></i></span>
+              <div><strong>Tecnologia Avançada</strong><p>Equipamentos de última geração para diagnósticos precisos.</p></div>
+            </div>
+            <div class="why-item">
+              <span class="why-icon"><i class="fa-solid fa-user-doctor"></i></span>
+              <div><strong>Equipa Qualificada</strong><p>Mais de 40 médicos especialistas com formação internacional.</p></div>
+            </div>
+            <div class="why-item">
+              <span class="why-icon"><i class="fa-solid fa-hand-holding-heart"></i></span>
+              <div><strong>Atendimento Humanizado</strong><p>Cuidado personalizado que respeita a dignidade de cada paciente.</p></div>
+            </div>
+            <div class="why-item">
+              <span class="why-icon"><i class="fa-solid fa-shield-halved"></i></span>
+              <div><strong>Segurança e Higiene</strong><p>Protocolos rigorosos de segurança e higienização hospitalar.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCTORS PREVIEW -->
+  <section class="doctors-preview section-pad">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Nossa equipa</span>
+        <h2 class="section-title">Médicos <em>especialistas</em></h2>
+        <p class="section-sub">Profissionais altamente qualificados ao seu serviço.</p>
+      </div>
+      <div class="doctors-grid">
+        <div class="doc-card">
+          <div class="doc-img">
+            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&q=80" alt="Dr. João Silva"/>
+            <div class="doc-overlay">
+              <a href="marcacao.html" class="doc-btn">Marcar Consulta</a>
+            </div>
+          </div>
+          <div class="doc-info">
+            <h3>Dr. João Silva</h3>
+            <p>Cardiologista</p>
+            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0</span></div>
+          </div>
+        </div>
+        <div class="doc-card">
+          <div class="doc-img">
+            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=500&q=80" alt="Dra. Ana Costa"/>
+            <div class="doc-overlay">
+              <a href="marcacao.html" class="doc-btn">Marcar Consulta</a>
+            </div>
+          </div>
+          <div class="doc-info">
+            <h3>Dra. Ana Costa</h3>
+            <p>Pediatra</p>
+            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0</span></div>
+          </div>
+        </div>
+        <div class="doc-card">
+          <div class="doc-img">
+            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=500&q=80" alt="Dr. Pedro Santos"/>
+            <div class="doc-overlay">
+              <a href="marcacao.html" class="doc-btn">Marcar Consulta</a>
+            </div>
+          </div>
+          <div class="doc-info">
+            <h3>Dr. Pedro Santos</h3>
+            <p>Clínica Geral</p>
+            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.8</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="center-action">
+        <a href="medicos.html" class="btn-outline">Ver todos os médicos <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials section-pad bg-blue">
+    <div class="container">
+      <div class="section-header centered">
+        <span class="section-tag light">Depoimentos</span>
+        <h2 class="section-title light">O que dizem os nossos <em>pacientes</em></h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"O atendimento foi excepcional. Os médicos são muito profissionais e atenciosos. Sinto-me sempre em boas mãos quando venho ao Hospital Vida Saudável."</p>
+          <div class="testi-author">
+            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&q=80" alt="Maria L."/>
+            <div><strong>Maria Luísa</strong><span>Paciente de Cardiologia</span></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"A Dra. Ana Costa é maravilhosa com as crianças. O meu filho adora vir às consultas. O ambiente é acolhedor e toda a equipa é muito simpática."</p>
+          <div class="testi-author">
+            <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&q=80" alt="Carlos M."/>
+            <div><strong>Carlos Mendes</strong><span>Pai de paciente de Pediatria</span></div>
+          </div>
+        </div>
+        <div class="testi-card">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"Vim de urgência às 2h da manhã e fui atendido rapidamente. A equipa de urgências é muito competente. Recomendo a todos os meus familiares."</p>
+          <div class="testi-author">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&q=80" alt="António F."/>
+            <div><strong>António Ferreira</strong><span>Paciente de Urgências</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="container">
+      <div class="cta-content">
+        <div>
+          <h2>Pronto para cuidar da sua saúde?</h2>
+          <p>Agende a sua consulta hoje mesmo. Estamos aqui para o ajudar.</p>
+        </div>
+        <div class="cta-actions">
+          <a href="marcacao.html" class="btn-primary">Marcar Consulta <i class="fa-solid fa-calendar-check"></i></a>
+          <a href="tel:+244900000000" class="btn-ghost-light"><i class="fa-solid fa-phone"></i> Ligar agora</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="footer-main"></footer>
+
+  <a href="#inicio" class="back-to-top" id="backTop" aria-label="Voltar ao topo">
+    <i class="fa-solid fa-arrow-up"></i>
+  </a>
+
+  <script src="main.js"></script>
+</body>
+</html>

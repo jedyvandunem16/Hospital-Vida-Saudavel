@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contacto — Hospital Vida Saudável</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-plus"></i></span>
+        <span class="logo-text">Vida Saudável</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="medicos.html">Médicos</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+        <li><a href="contacto.html" class="active">Contacto</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="tel:+244900000000" class="nav-phone"><i class="fa-solid fa-phone"></i> +244 900 000 000</a>
+        <a href="marcacao.html" class="btn-consulta">Marcar Consulta</a>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <section class="page-hero short">
+    <div class="page-hero-bg">
+      <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1400&q=80" alt="Luanda"/>
+      <div class="page-hero-overlay"></div>
+    </div>
+    <div class="page-hero-content container">
+      <div class="breadcrumb"><a href="index.html">Início</a> <i class="fa-solid fa-chevron-right"></i> <span>Contacto</span></div>
+      <h1>Entre em <em>contacto</em></h1>
+      <p>Estamos aqui para o ajudar. Fale connosco por qualquer via.</p>
+    </div>
+  </section>
+
+  <!-- CONTACT CARDS -->
+  <section class="section-pad">
+    <div class="container">
+      <div class="contact-cards">
+        <div class="cinfo-card">
+          <div class="cinfo-icon"><i class="fa-solid fa-location-dot"></i></div>
+          <h3>Localização</h3>
+          <p>Av. 4 de Fevereiro, Nº 123<br>Luanda, Angola</p>
+          <a href="https://maps.google.com" target="_blank" class="cinfo-link">Ver no mapa <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="cinfo-card">
+          <div class="cinfo-icon"><i class="fa-solid fa-phone"></i></div>
+          <h3>Telefone</h3>
+          <p>+244 900 000 000<br>+244 900 000 001</p>
+          <a href="tel:+244900000000" class="cinfo-link">Ligar agora <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="cinfo-card">
+          <div class="cinfo-icon"><i class="fa-brands fa-whatsapp"></i></div>
+          <h3>WhatsApp</h3>
+          <p>+244 900 000 002<br>Disponível 8h–20h</p>
+          <a href="https://wa.me/244900000002" target="_blank" class="cinfo-link">Enviar mensagem <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="cinfo-card">
+          <div class="cinfo-icon"><i class="fa-solid fa-clock"></i></div>
+          <h3>Horário</h3>
+          <p>Consultas: Seg–Sex 8h–18h<br><strong>Urgência: 24h / 7 dias</strong></p>
+          <a href="marcacao.html" class="cinfo-link">Marcar consulta <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <!-- CONTACT FORM + MAP -->
+      <div class="contact-main-grid">
+        <div class="contact-form-wrap">
+          <h2>Envie-nos uma mensagem</h2>
+          <p>Responderemos em até 24 horas úteis.</p>
+          <form id="contactForm" class="contact-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nome">Nome completo *</label>
+                <input type="text" id="nome" name="nome" placeholder="O seu nome" required/>
+                <span class="field-error" id="nomeErr"></span>
+              </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" placeholder="email@exemplo.com" required/>
+                <span class="field-error" id="emailErr"></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="telefone">Telefone</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="+244 900 000 000"/>
+              </div>
+              <div class="form-group">
+                <label for="assunto">Assunto *</label>
+                <select id="assunto" name="assunto" required>
+                  <option value="">Selecione um assunto</option>
+                  <option value="consulta">Informações sobre consultas</option>
+                  <option value="urgencia">Urgência</option>
+                  <option value="laboratorio">Análises / Laboratório</option>
+                  <option value="reclamacao">Reclamação</option>
+                  <option value="elogio">Elogio / Sugestão</option>
+                  <option value="outro">Outro</option>
+                </select>
+                <span class="field-error" id="assuntoErr"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="mensagem">Mensagem *</label>
+              <textarea id="mensagem" name="mensagem" rows="5" placeholder="Escreva a sua mensagem aqui..." required></textarea>
+              <span class="field-error" id="mensagemErr"></span>
+            </div>
+            <div class="form-group checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="privacidade" required/>
+                <span>Aceito a <a href="#">Política de Privacidade</a> e autorizo o tratamento dos meus dados pessoais. *</span>
+              </label>
+              <span class="field-error" id="privacidadeErr"></span>
+            </div>
+            <button type="submit" class="btn-primary full" id="submitBtn">
+              <span id="btnText">Enviar Mensagem <i class="fa-solid fa-paper-plane"></i></span>
+              <span id="btnLoading" class="hidden"><i class="fa-solid fa-circle-notch fa-spin"></i> A enviar...</span>
+            </button>
+          </form>
+          <div class="form-success hidden" id="formSuccess">
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Mensagem enviada com sucesso!</h3>
+            <p>Obrigado pelo contacto. Entraremos em contacto em breve.</p>
+          </div>
+        </div>
+        <div class="contact-map-wrap">
+          <h2>Como chegar</h2>
+          <p>Estamos localizados no coração de Luanda.</p>
+          <div class="map-embed">
+            <!-- Google Maps Embed — in production use real coordinates -->
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15760.94895!2d13.2343!3d-8.8368!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1a51f15cdc8d2c7d%3A0x850c1c8b7e1d160b!2sLuanda%2C%20Angola!5e0!3m2!1spt!2sao!4v1700000000000"
+              width="100%" height="320" style="border:0;border-radius:12px;" allowfullscreen="" loading="lazy">
+            </iframe>
+          </div>
+          <div class="directions-btns">
+            <a href="https://maps.google.com/?q=Luanda,Angola" target="_blank" class="btn-outline sm"><i class="fa-brands fa-google"></i> Google Maps</a>
+            <a href="https://maps.apple.com/?q=Luanda" target="_blank" class="btn-outline sm"><i class="fa-brands fa-apple"></i> Apple Maps</a>
+          </div>
+          <div class="transport-info">
+            <div class="transport-item">
+              <i class="fa-solid fa-car"></i>
+              <div><strong>De carro</strong><p>Estacionamento gratuito disponível junto ao hospital.</p></div>
+            </div>
+            <div class="transport-item">
+              <i class="fa-solid fa-bus"></i>
+              <div><strong>Transporte público</strong><p>Paragem de Candongueiro a 200m da entrada principal.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" id="footer-main"></footer>
+  <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
+  <script src="main.js"></script>
+  <script>
+    // Contact form validation
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      let valid = true;
+
+      const fields = [
+        { id: 'nome', errId: 'nomeErr', msg: 'Por favor, insira o seu nome.' },
+        { id: 'email', errId: 'emailErr', msg: 'Por favor, insira um email válido.', type: 'email' },
+        { id: 'assunto', errId: 'assuntoErr', msg: 'Por favor, selecione um assunto.' },
+        { id: 'mensagem', errId: 'mensagemErr', msg: 'Por favor, escreva a sua mensagem.' },
+      ];
+
+      fields.forEach(f => {
+        const el = document.getElementById(f.id);
+        const err = document.getElementById(f.errId);
+        let ok = el.value.trim() !== '';
+        if (f.type === 'email' && ok) ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+        err.textContent = ok ? '' : f.msg;
+        el.classList.toggle('error', !ok);
+        if (!ok) valid = false;
+      });
+
+      const priv = document.getElementById('privacidade');
+      const privErr = document.getElementById('privacidadeErr');
+      if (!priv.checked) { privErr.textContent = 'Deve aceitar a política de privacidade.'; valid = false; }
+      else privErr.textContent = '';
+
+      if (!valid) return;
+
+      document.getElementById('btnText').classList.add('hidden');
+      document.getElementById('btnLoading').classList.remove('hidden');
+
+      setTimeout(() => {
+        form.classList.add('hidden');
+        document.getElementById('formSuccess').classList.remove('hidden');
+      }, 1800);
+    });
+  </script>
+</body>
+</html>

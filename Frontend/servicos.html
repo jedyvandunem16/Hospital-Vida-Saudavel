@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Serviços — Hospital Vida Saudável</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-plus"></i></span>
+        <span class="logo-text">Vida Saudável</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="servicos.html" class="active">Serviços</a></li>
+        <li><a href="medicos.html">Médicos</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="tel:+244900000000" class="nav-phone"><i class="fa-solid fa-phone"></i> +244 900 000 000</a>
+        <a href="marcacao.html" class="btn-consulta">Marcar Consulta</a>
+      </div>
+      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg">
+      <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?w=1400&q=80" alt="Serviços"/>
+      <div class="page-hero-overlay"></div>
+    </div>
+    <div class="page-hero-content container">
+      <div class="breadcrumb"><a href="index.html">Início</a> <i class="fa-solid fa-chevron-right"></i> <span>Serviços</span></div>
+      <h1>As nossas <em>especialidades</em></h1>
+      <p>Cuidados completos para toda a família com tecnologia de ponta e médicos experientes.</p>
+    </div>
+  </section>
+
+  <!-- SERVICES FULL LIST -->
+  <section class="section-pad">
+    <div class="container">
+
+      <!-- Cardiologia -->
+      <div class="svc-detail" id="cardiologia">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?w=600&q=80" alt="Cardiologia"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#e53935;--cb:rgba(229,57,53,0.1)"><i class="fa-solid fa-heart-pulse"></i></div>
+          <h2>Cardiologia</h2>
+          <p>O nosso Serviço de Cardiologia oferece diagnóstico e tratamento de doenças cardiovasculares utilizando equipamentos de última geração. A nossa equipa de cardiologistas está dedicada a prevenir, diagnosticar e tratar todas as condições do coração.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Eletrocardiograma (ECG)</li>
+            <li><i class="fa-solid fa-check"></i> Ecocardiograma</li>
+            <li><i class="fa-solid fa-check"></i> Holter 24h</li>
+            <li><i class="fa-solid fa-check"></i> Teste de esforço</li>
+            <li><i class="fa-solid fa-check"></i> Cateterismo cardíaco</li>
+            <li><i class="fa-solid fa-check"></i> Monitorização da pressão arterial</li>
+          </ul>
+          <a href="marcacao.html?servico=cardiologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Pediatria -->
+      <div class="svc-detail reverse" id="pediatria">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?w=600&q=80" alt="Pediatria"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#f9a825;--cb:rgba(249,168,37,0.1)"><i class="fa-solid fa-baby"></i></div>
+          <h2>Pediatria</h2>
+          <p>O nosso Departamento de Pediatria é especializado no cuidado integral de crianças desde o nascimento até à adolescência. Criamos um ambiente acolhedor e seguro para que os pequenos pacientes se sintam confortáveis.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Consultas de rotina e vacinação</li>
+            <li><i class="fa-solid fa-check"></i> Pediatria neonatal</li>
+            <li><i class="fa-solid fa-check"></i> Pediatria do desenvolvimento</li>
+            <li><i class="fa-solid fa-check"></i> Nutrição pediátrica</li>
+            <li><i class="fa-solid fa-check"></i> Urgências pediátricas</li>
+            <li><i class="fa-solid fa-check"></i> Alergologia pediátrica</li>
+          </ul>
+          <a href="marcacao.html?servico=pediatria" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Laboratório -->
+      <div class="svc-detail" id="laboratorio">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1579165466741-7f35e4755660?w=600&q=80" alt="Laboratório"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#1565c0;--cb:rgba(21,101,192,0.1)"><i class="fa-solid fa-flask"></i></div>
+          <h2>Laboratório de Análises</h2>
+          <p>O nosso laboratório clínico dispõe de tecnologia de ponta para realização de análises com precisão e rapidez. Os resultados estão disponíveis online em poucas horas para maior comodidade dos nossos pacientes.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Análises de sangue completas</li>
+            <li><i class="fa-solid fa-check"></i> Análises de urina e fezes</li>
+            <li><i class="fa-solid fa-check"></i> Microbiologia e culturas</li>
+            <li><i class="fa-solid fa-check"></i> Histopatologia</li>
+            <li><i class="fa-solid fa-check"></i> Resultados online em 24h</li>
+            <li><i class="fa-solid fa-check"></i> Colheita ao domicílio</li>
+          </ul>
+          <a href="marcacao.html?servico=laboratorio" class="btn-primary">Agendar Análises <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Urgência -->
+      <div class="svc-detail reverse" id="urgencia">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1612276529407-7b4b9fce8b9f?w=600&q=80" alt="Urgência"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#00897b;--cb:rgba(0,137,123,0.1)"><i class="fa-solid fa-truck-medical"></i></div>
+          <h2>Urgência 24h</h2>
+          <p>O nosso Serviço de Urgência funciona 24 horas por dia, 7 dias por semana, 365 dias por ano. Com equipa médica e de enfermagem permanente, estamos sempre prontos para atender qualquer emergência médica.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Atendimento imediato 24/7</li>
+            <li><i class="fa-solid fa-check"></i> Triagem de Manchester</li>
+            <li><i class="fa-solid fa-check"></i> Sala de reanimação</li>
+            <li><i class="fa-solid fa-check"></i> UCI — Unidade de Cuidados Intensivos</li>
+            <li><i class="fa-solid fa-check"></i> Bloco operatório de urgência</li>
+            <li><i class="fa-solid fa-check"></i> Ambulância equipada</li>
+          </ul>
+          <a href="tel:+244900000000" class="btn-primary btn-red">Ligar: +244 900 000 000 <i class="fa-solid fa-phone"></i></a>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Ortopedia -->
+      <div class="svc-detail" id="ortopedia">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=80" alt="Ortopedia"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#6d4c41;--cb:rgba(109,76,65,0.1)"><i class="fa-solid fa-bone"></i></div>
+          <h2>Ortopedia e Traumatologia</h2>
+          <p>O nosso Serviço de Ortopedia trata lesões e doenças do sistema músculo-esquelético. Com cirurgiões altamente especializados e equipamentos de imagiologia modernos, oferecemos diagnósticos precisos e tratamentos eficazes.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Cirurgia ortopédica</li>
+            <li><i class="fa-solid fa-check"></i> Artroscopia</li>
+            <li><i class="fa-solid fa-check"></i> Artroplastia (próteses)</li>
+            <li><i class="fa-solid fa-check"></i> Traumatologia desportiva</li>
+            <li><i class="fa-solid fa-check"></i> Fisioterapia integrada</li>
+            <li><i class="fa-solid fa-check"></i> Coluna vertebral</li>
+          </ul>
+          <a href="marcacao.html?servico=ortopedia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Neurologia -->
+      <div class="svc-detail reverse" id="neurologia">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=600&q=80" alt="Neurologia"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#7b1fa2;--cb:rgba(123,31,162,0.1)"><i class="fa-solid fa-brain"></i></div>
+          <h2>Neurologia</h2>
+          <p>Diagnóstico e tratamento de doenças do sistema nervoso central e periférico. A nossa equipa de neurologistas utiliza tecnologias de imagiologia avançada para um diagnóstico preciso e tratamento adequado.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Ressonância magnética cerebral</li>
+            <li><i class="fa-solid fa-check"></i> Eletroencefalograma (EEG)</li>
+            <li><i class="fa-solid fa-check"></i> Tratamento de epilepsia</li>
+            <li><i class="fa-solid fa-check"></i> AVC — prevenção e tratamento</li>
+            <li><i class="fa-solid fa-check"></i> Doença de Parkinson</li>
+            <li><i class="fa-solid fa-check"></i> Cefaleia e enxaqueca</li>
+          </ul>
+          <a href="marcacao.html?servico=neurologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="cta-band">
+    <div class="container">
+      <div class="cta-content">
+        <div>
+          <h2>Precisa de uma consulta?</h2>
+          <p>Agende online ou ligue para nós. Estamos sempre disponíveis.</p>
+        </div>
+        <div class="cta-actions">
+          <a href="marcacao.html" class="btn-primary">Marcar Consulta <i class="fa-solid fa-calendar-check"></i></a>
+          <a href="tel:+244900000000" class="btn-ghost-light"><i class="fa-solid fa-phone"></i> Ligar agora</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer" id="footer-main"></footer>
+  <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
+  <script src="main.js"></script>
+</body>
+</html>
