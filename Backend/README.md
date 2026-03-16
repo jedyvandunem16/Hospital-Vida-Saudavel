@@ -201,25 +201,25 @@ const data = await res.json();
 ## 🌐 Variáveis de Ambiente (.env)
 
 ```env
-PORT=3000
-NODE_ENV=development
+PORT=
+NODE_ENV=
 
-DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=a_tua_password
-DB_NAME=hospital_vida_saudavel
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
 
-JWT_SECRET=string_longa_e_aleatoria_aqui
-JWT_EXPIRES_IN=7d
+JWT_SECRET=
+JWT_EXPIRES_IN=
 
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=hospital@gmail.com
-EMAIL_PASS=app_password_gmail
-EMAIL_FROM="Hospital Vida Saudável <hospital@gmail.com>"
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_USER=
+EMAIL_PASS=
+EMAIL_FROM=
 
-FRONTEND_URL=http://localhost:5500
+FRONTEND_URL=
 ```
 
 ---
