@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consultas — Hospital Vida Saudável</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Gestão de Consultas</span>
+          <div class="card-actions">
+            <div class="search-input">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="searchInput" placeholder="Pesquisar paciente..."/>
+            </div>
+            <select class="filter-select" id="filterEstado">
+              <option value="">Todos os estados</option>
+              <option value="pendente">Pendente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="concluida">Concluída</option>
+              <option value="cancelada">Cancelada</option>
+              <option value="falta">Falta</option>
+            </select>
+            <input type="date" class="filter-select" id="filterData" style="cursor:pointer"/>
+            <button class="btn btn-primary" onclick="openNovaConsulta()">
+              <i class="fa-solid fa-plus"></i> Nova Consulta
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Data / Hora</th>
+                <th>Paciente</th>
+                <th>Médico</th>
+                <th>Especialidade</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th>Acções</th>
+              </tr>
+            </thead>
+            <tbody id="consultasBody">
+              <tr><td colspan="8"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:0.82rem;color:var(--text-3)" id="tableInfo"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal: Ver / Editar Consulta -->
+  <div class="modal-overlay" id="modalConsulta">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Detalhes da Consulta</h3>
+        <button class="modal-close" onclick="closeModal('modalConsulta')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Nova Consulta -->
+  <div class="modal-overlay" id="modalNova">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Nova Consulta</h3>
+        <button class="modal-close" onclick="closeModal('modalNova')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome do Paciente *</label>
+            <input type="text" id="n_nome" placeholder="Nome completo"/>
+          </div>
+          <div class="form-group">
+            <label>Telefone *</label>
+            <input type="tel" id="n_tel" placeholder="+244 900 000 000"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="n_email" placeholder="email@exemplo.com"/>
+          </div>
+          <div class="form-group">
+            <label>Especialidade *</label>
+            <select id="n_esp"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Médico *</label>
+            <select id="n_medico"></select>
+          </div>
+          <div class="form-group">
+            <label>Data e Hora *</label>
+            <input type="datetime-local" id="n_data"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Motivo</label>
+          <textarea id="n_motivo" rows="2" placeholder="Motivo da consulta..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalNova')">Cancelar</button>
+        <button class="btn btn-primary" onclick="criarConsulta()"><i class="fa-solid fa-save"></i> Agendar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('consultas');
+    buildTopbar('Consultas');
+
+    let allConsultas = [];
+
+    async function loadConsultas() {
+      const estado = document.getElementById('filterEstado').value;
+      const data   = document.getElementById('filterData').value;
+      const params = {};
+      if (estado) params.estado = estado;
+      if (data)   { params.data_inicio = data; params.data_fim = data; }
+
+      const q = new URLSearchParams(params).toString();
+      try {
+        allConsultas = await api('GET', `/consultas${q ? '?' + q : ''}`);
+        renderTable(allConsultas);
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function renderTable(list) {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = list.filter(c =>
+        !search ||
+        c.paciente_nome?.toLowerCase().includes(search) ||
+        c.medico_nome?.toLowerCase().includes(search)
+      );
+
+      document.getElementById('tableInfo').textContent = `${filtered.length} consulta(s) encontrada(s)`;
+
+      if (!filtered.length) {
+        document.getElementById('consultasBody').innerHTML =
+          `<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>Nenhuma consulta encontrada</p></div></td></tr>`;
+        return;
+      }
+
+      document.getElementById('consultasBody').innerHTML = filtered.map(c => `
+        <tr>
+          <td style="color:var(--text-3);font-size:0.8rem">#${c.id}</td>
+          <td><strong style="font-size:0.88rem">${formatDate(c.data_hora)}</strong></td>
+          <td>
+            <div style="font-weight:600;font-size:0.88rem">${c.paciente_nome}</div>
+            <div style="font-size:0.76rem;color:var(--text-3)">${c.paciente_tel || ''}</div>
+          </td>
+          <td style="font-size:0.88rem">${c.medico_nome}</td>
+          <td><span style="font-size:0.82rem">${c.especialidade}</span></td>
+          <td><span style="font-size:0.78rem;background:var(--bg);padding:3px 8px;border-radius:5px">${c.tipo}</span></td>
+          <td>${estadoBadge(c.estado)}</td>
+          <td>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm btn-outline btn-icon" onclick="verConsulta(${c.id})" title="Ver detalhes">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+              ${c.estado === 'pendente' ? `
+                <button class="btn btn-sm btn-icon" style="background:#dcfce7;color:#166534" onclick="mudarEstado(${c.id},'confirmada')" title="Confirmar">
+                  <i class="fa-solid fa-check"></i>
+                </button>` : ''}
+              ${!['cancelada','concluida'].includes(c.estado) ? `
+                <button class="btn btn-sm btn-danger btn-icon" onclick="mudarEstado(${c.id},'cancelada')" title="Cancelar">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>` : ''}
+            </div>
+          </td>
+        </tr>`).join('');
+    }
+
+    async function verConsulta(id) {
+      try {
+        const c = await api('GET', `/consultas/${id}`);
+        document.getElementById('modalTitle').textContent = `Consulta #${c.id}`;
+        document.getElementById('modalBody').innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Paciente</label><p style="font-weight:600;margin-top:3px">${c.paciente_nome}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Telefone</label><p style="margin-top:3px">${c.paciente_tel || '—'}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Email</label><p style="margin-top:3px">${c.paciente_email || '—'}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Data Nasc.</label><p style="margin-top:3px">${formatDateShort(c.data_nascimento)}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Médico</label><p style="font-weight:600;margin-top:3px">${c.medico_nome}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Especialidade</label><p style="margin-top:3px">${c.especialidade}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Data / Hora</label><p style="font-weight:600;margin-top:3px">${formatDate(c.data_hora)}</p></div>
+            <div><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Estado</label><p style="margin-top:3px">${estadoBadge(c.estado)}</p></div>
+          </div>
+          ${c.motivo ? `<div style="margin-top:16px;padding:14px;background:var(--bg);border-radius:8px"><label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Motivo</label><p style="margin-top:5px;font-size:0.88rem">${c.motivo}</p></div>` : ''}
+          <div style="margin-top:16px">
+            <label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase;display:block;margin-bottom:8px">Notas do Médico</label>
+            <textarea id="notasMedico" rows="3" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px;font-family:var(--font-body);font-size:0.88rem;resize:vertical" placeholder="Adicionar notas...">${c.notas_medico || ''}</textarea>
+          </div>
+          <div style="margin-top:16px">
+            <label style="font-size:0.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase;display:block;margin-bottom:8px">Alterar Estado</label>
+            <select id="novoEstado" style="border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:0.88rem;width:100%">
+              ${['pendente','confirmada','concluida','cancelada','falta'].map(e =>
+                `<option value="${e}" ${e === c.estado ? 'selected' : ''}>${e.charAt(0).toUpperCase() + e.slice(1)}</option>`
+              ).join('')}
+            </select>
+          </div>
+        `;
+        document.getElementById('modalFooter').innerHTML = `
+          <button class="btn btn-outline" onclick="closeModal('modalConsulta')">Fechar</button>
+          <button class="btn btn-primary" onclick="guardarConsulta(${c.id})"><i class="fa-solid fa-save"></i> Guardar</button>
+        `;
+        openModal('modalConsulta');
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function guardarConsulta(id) {
+      const estado = document.getElementById('novoEstado').value;
+      const notas  = document.getElementById('notasMedico').value;
+      try {
+        await api('PATCH', `/consultas/${id}/estado`, { estado, notas_medico: notas });
+        toast('Consulta actualizada com sucesso!');
+        closeModal('modalConsulta');
+        loadConsultas();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function mudarEstado(id, estado) {
+      if (!confirm(`Confirma a alteração para "${estado}"?`)) return;
+      try {
+        await api('PATCH', `/consultas/${id}/estado`, { estado });
+        toast(`Consulta marcada como "${estado}".`);
+        loadConsultas();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    // Nova consulta
+    async function openNovaConsulta() {
+      try {
+        const [esps, meds] = await Promise.all([
+          api('GET', '/especialidades'),
+          api('GET', '/medicos'),
+        ]);
+        document.getElementById('n_esp').innerHTML = esps.map(e => `<option value="${e.id}">${e.nome}</option>`).join('');
+        document.getElementById('n_medico').innerHTML = meds.map(m => `<option value="${m.id}">${m.titulo} ${m.nome}</option>`).join('');
+        // Set min datetime
+        const now = new Date(); now.setMinutes(now.getMinutes() + 30);
+        document.getElementById('n_data').min = now.toISOString().slice(0,16);
+        openModal('modalNova');
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function criarConsulta() {
+      const nome  = document.getElementById('n_nome').value.trim();
+      const tel   = document.getElementById('n_tel').value.trim();
+      const email = document.getElementById('n_email').value.trim();
+      const espId = document.getElementById('n_esp').value;
+      const medId = document.getElementById('n_medico').value;
+      const data  = document.getElementById('n_data').value;
+      if (!nome || !tel || !espId || !medId || !data) { toast('Preencha todos os campos obrigatórios.', 'error'); return; }
+      try {
+        await api('POST', '/consultas', {
+          paciente_nome: nome, paciente_telefone: tel, paciente_email: email,
+          especialidade_id: +espId, medico_id: +medId,
+          data_hora: data + ':00', tipo: 'presencial',
+          motivo: document.getElementById('n_motivo').value,
+        }, true);
+        toast('Consulta agendada com sucesso!');
+        closeModal('modalNova');
+        loadConsultas();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // Filters
+    document.getElementById('filterEstado').addEventListener('change', loadConsultas);
+    document.getElementById('filterData').addEventListener('change', loadConsultas);
+    document.getElementById('searchInput').addEventListener('input', () => renderTable(allConsultas));
+
+    loadConsultas();
+  </script>
+</body>
+</html>

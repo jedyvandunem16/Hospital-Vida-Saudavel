@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pacientes — Hospital Vida Saudável</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Pacientes</span>
+          <div class="card-actions">
+            <div class="search-input">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="searchInput" placeholder="Nome, telefone ou BI..."/>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('modalNovo')">
+              <i class="fa-solid fa-plus"></i> Novo Paciente
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Telefone</th><th>Email</th><th>Data Nasc.</th><th>BI</th><th>Acções</th></tr>
+            </thead>
+            <tbody id="pacientesBody">
+              <tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:14px 20px;font-size:0.82rem;color:var(--text-3);border-top:1px solid var(--border)" id="tableInfo"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Histórico Paciente -->
+  <div class="modal-overlay" id="modalPaciente">
+    <div class="modal" style="max-width:680px">
+      <div class="modal-header">
+        <h3 id="modalNomePac">Paciente</h3>
+        <button class="modal-close" onclick="closeModal('modalPaciente')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="modalPacBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalPaciente')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Paciente -->
+  <div class="modal-overlay" id="modalNovo">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Novo Paciente</h3>
+        <button class="modal-close" onclick="closeModal('modalNovo')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group"><label>Nome *</label><input type="text" id="p_nome" placeholder="Nome completo"/></div>
+          <div class="form-group"><label>Telefone *</label><input type="tel" id="p_tel" placeholder="+244 900 000 000"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Email</label><input type="email" id="p_email" placeholder="email@exemplo.com"/></div>
+          <div class="form-group"><label>Data Nascimento</label><input type="date" id="p_nasc"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Género</label>
+            <select id="p_genero"><option value="">—</option><option value="masculino">Masculino</option><option value="feminino">Feminino</option><option value="outro">Outro</option></select>
+          </div>
+          <div class="form-group"><label>BI</label><input type="text" id="p_bi" placeholder="000000000LA000"/></div>
+        </div>
+        <div class="form-group"><label>Notas</label><textarea id="p_notas" rows="2" placeholder="Observações..."></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalNovo')">Cancelar</button>
+        <button class="btn btn-primary" onclick="criarPaciente()"><i class="fa-solid fa-save"></i> Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('pacientes');
+    buildTopbar('Pacientes');
+
+    let searchTimeout;
+
+    async function loadPacientes(q = '') {
+      try {
+        const list = await api('GET', `/pacientes${q ? '?q=' + encodeURIComponent(q) : ''}`);
+        document.getElementById('tableInfo').textContent = `${list.length} paciente(s)`;
+        if (!list.length) {
+          document.getElementById('pacientesBody').innerHTML =
+            `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-users"></i><p>Nenhum paciente encontrado</p></div></td></tr>`;
+          return;
+        }
+        document.getElementById('pacientesBody').innerHTML = list.map(p => `
+          <tr>
+            <td><strong>${p.nome}</strong></td>
+            <td>${p.telefone}</td>
+            <td>${p.email || '—'}</td>
+            <td>${formatDateShort(p.data_nascimento)}</td>
+            <td style="font-size:0.82rem;color:var(--text-3)">${p.bi || '—'}</td>
+            <td>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-sm btn-outline btn-icon" onclick="verPaciente(${p.id})" title="Ver histórico">
+                  <i class="fa-solid fa-clock-rotate-left"></i>
+                </button>
+                <a href="consultas.html?paciente=${p.id}" class="btn btn-sm btn-outline btn-icon" title="Consultas">
+                  <i class="fa-solid fa-calendar-check"></i>
+                </a>
+              </div>
+            </td>
+          </tr>`).join('');
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function verPaciente(id) {
+      try {
+        const p = await api('GET', `/pacientes/${id}`);
+        document.getElementById('modalNomePac').textContent = p.nome;
+        const historicoHTML = p.historico?.length
+          ? `<table style="width:100%;border-collapse:collapse;margin-top:8px">
+              <thead><tr>
+                <th style="padding:8px;text-align:left;font-size:0.75rem;color:var(--text-3);background:var(--bg)">Data</th>
+                <th style="padding:8px;text-align:left;font-size:0.75rem;color:var(--text-3);background:var(--bg)">Médico</th>
+                <th style="padding:8px;text-align:left;font-size:0.75rem;color:var(--text-3);background:var(--bg)">Especialidade</th>
+                <th style="padding:8px;text-align:left;font-size:0.75rem;color:var(--text-3);background:var(--bg)">Estado</th>
+              </tr></thead>
+              <tbody>${p.historico.map(c => `
+                <tr style="border-bottom:1px solid var(--border)">
+                  <td style="padding:9px 8px;font-size:0.84rem">${formatDate(c.data_hora)}</td>
+                  <td style="padding:9px 8px;font-size:0.84rem">${c.medico}</td>
+                  <td style="padding:9px 8px;font-size:0.82rem">${c.especialidade}</td>
+                  <td style="padding:9px 8px">${estadoBadge(c.estado)}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>`
+          : `<div class="empty-state" style="padding:24px"><i class="fa-solid fa-calendar-xmark"></i><p>Sem consultas registadas</p></div>`;
+
+        document.getElementById('modalPacBody').innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Telefone</label><p style="margin-top:3px">${p.telefone}</p></div>
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Email</label><p style="margin-top:3px">${p.email || '—'}</p></div>
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Data Nascimento</label><p style="margin-top:3px">${formatDateShort(p.data_nascimento)}</p></div>
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">BI</label><p style="margin-top:3px">${p.bi || '—'}</p></div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:16px">
+            <strong style="font-size:0.88rem">Histórico de Consultas (${p.historico?.length || 0})</strong>
+            ${historicoHTML}
+          </div>`;
+        openModal('modalPaciente');
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function criarPaciente() {
+      const nome = document.getElementById('p_nome').value.trim();
+      const tel  = document.getElementById('p_tel').value.trim();
+      if (!nome || !tel) { toast('Nome e telefone são obrigatórios.', 'error'); return; }
+      try {
+        await api('POST', '/pacientes', {
+          nome, telefone: tel,
+          email: document.getElementById('p_email').value || null,
+          data_nascimento: document.getElementById('p_nasc').value || null,
+          genero: document.getElementById('p_genero').value || null,
+          bi: document.getElementById('p_bi').value || null,
+          notas: document.getElementById('p_notas').value || null,
+        });
+        toast('Paciente criado com sucesso!');
+        closeModal('modalNovo');
+        loadPacientes();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => loadPacientes(this.value), 400);
+    });
+
+    loadPacientes();
+  </script>
+</body>
+</html>

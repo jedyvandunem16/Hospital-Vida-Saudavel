@@ -33,7 +33,7 @@
 
   <section class="page-hero short">
     <div class="page-hero-bg">
-      <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1400&q=80" alt="Luanda"/>
+      <img src="img/mapa.jfif" alt="Luanda"/>
       <div class="page-hero-overlay"></div>
     </div>
     <div class="page-hero-content container">
@@ -165,45 +165,6 @@
   <footer class="footer" id="footer-main"></footer>
   <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
   <script src="main.js"></script>
-  <script>
-    // Contact form validation
-    const form = document.getElementById('contactForm');
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      let valid = true;
-
-      const fields = [
-        { id: 'nome', errId: 'nomeErr', msg: 'Por favor, insira o seu nome.' },
-        { id: 'email', errId: 'emailErr', msg: 'Por favor, insira um email válido.', type: 'email' },
-        { id: 'assunto', errId: 'assuntoErr', msg: 'Por favor, selecione um assunto.' },
-        { id: 'mensagem', errId: 'mensagemErr', msg: 'Por favor, escreva a sua mensagem.' },
-      ];
-
-      fields.forEach(f => {
-        const el = document.getElementById(f.id);
-        const err = document.getElementById(f.errId);
-        let ok = el.value.trim() !== '';
-        if (f.type === 'email' && ok) ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
-        err.textContent = ok ? '' : f.msg;
-        el.classList.toggle('error', !ok);
-        if (!ok) valid = false;
-      });
-
-      const priv = document.getElementById('privacidade');
-      const privErr = document.getElementById('privacidadeErr');
-      if (!priv.checked) { privErr.textContent = 'Deve aceitar a política de privacidade.'; valid = false; }
-      else privErr.textContent = '';
-
-      if (!valid) return;
-
-      document.getElementById('btnText').classList.add('hidden');
-      document.getElementById('btnLoading').classList.remove('hidden');
-
-      setTimeout(() => {
-        form.classList.add('hidden');
-        document.getElementById('formSuccess').classList.remove('hidden');
-      }, 1800);
-    });
-  </script>
+  <script src="api.js"></script>
 </body>
 </html>

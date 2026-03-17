@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mensagens — Hospital Vida Saudável</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Mensagens de Contacto</span>
+          <div class="card-actions">
+            <select class="filter-select" id="filterLida">
+              <option value="">Todas</option>
+              <option value="0">Não lidas</option>
+              <option value="1">Lidas</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Data</th><th>Nome</th><th>Email</th><th>Assunto</th><th>Estado</th><th>Acção</th></tr>
+            </thead>
+            <tbody id="mensagensBody">
+              <tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Mensagem -->
+  <div class="modal-overlay" id="modalMsg">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalMsgTitle">Mensagem</h3>
+        <button class="modal-close" onclick="closeModal('modalMsg')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="modalMsgBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalMsg')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('mensagens');
+    buildTopbar('Mensagens');
+
+    async function loadMensagens() {
+      const lida = document.getElementById('filterLida').value;
+      try {
+        const list = await api('GET', `/mensagens${lida !== '' ? '?lida=' + lida : ''}`);
+        if (!list.length) {
+          document.getElementById('mensagensBody').innerHTML =
+            `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-envelope-open"></i><p>Nenhuma mensagem</p></div></td></tr>`;
+          return;
+        }
+        document.getElementById('mensagensBody').innerHTML = list.map(m => `
+          <tr style="${!m.lida ? 'font-weight:600;background:#fafbff' : ''}">
+            <td style="font-size:0.82rem;color:var(--text-3)">${formatDate(m.criado_em)}</td>
+            <td>${m.nome}</td>
+            <td style="font-size:0.84rem">${m.email}</td>
+            <td>${m.assunto || '—'}</td>
+            <td>
+              ${m.lida
+                ? `<span class="badge" style="background:#f1f5f9;color:var(--text-3)"><i class="fa-solid fa-envelope-open"></i> Lida</span>`
+                : `<span class="badge badge-pendente"><i class="fa-solid fa-envelope"></i> Nova</span>`}
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline btn-icon" onclick="verMensagem(${m.id})" title="Ver mensagem">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </td>
+          </tr>`).join('');
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function verMensagem(id) {
+      try {
+        const list = await api('GET', '/mensagens');
+        const m = list.find(x => x.id === id);
+        if (!m) return;
+        document.getElementById('modalMsgTitle').textContent = m.assunto || 'Mensagem';
+        document.getElementById('modalMsgBody').innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">De</label><p style="margin-top:3px;font-weight:600">${m.nome}</p></div>
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Email</label><p style="margin-top:3px"><a href="mailto:${m.email}" style="color:var(--blue)">${m.email}</a></p></div>
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Telefone</label><p style="margin-top:3px">${m.telefone || '—'}</p></div>
+            <div><label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Data</label><p style="margin-top:3px">${formatDate(m.criado_em)}</p></div>
+          </div>
+          <div style="background:var(--bg);border-radius:8px;padding:16px">
+            <label style="font-size:0.72rem;color:var(--text-3);font-weight:700;text-transform:uppercase">Mensagem</label>
+            <p style="margin-top:8px;font-size:0.9rem;line-height:1.7;white-space:pre-wrap">${m.mensagem}</p>
+          </div>
+          <div style="margin-top:16px;display:flex;gap:10px">
+            <a href="mailto:${m.email}?subject=Re: ${m.assunto || 'Contacto'}" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-reply"></i> Responder por Email
+            </a>
+            ${m.telefone ? `<a href="tel:${m.telefone}" class="btn btn-outline btn-sm"><i class="fa-solid fa-phone"></i> Ligar</a>` : ''}
+          </div>`;
+        openModal('modalMsg');
+        // Marcar como lida
+        if (!m.lida) { await api('PATCH', `/mensagens/${id}/lida`); loadMensagens(); }
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.getElementById('filterLida').addEventListener('change', loadMensagens);
+    loadMensagens();
+  </script>
+</body>
+</html>

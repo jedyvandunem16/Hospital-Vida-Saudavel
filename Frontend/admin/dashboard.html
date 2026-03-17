@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Hospital Vida Saudável</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
+        <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
+        <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
+        <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
+      </div>
+
+      <!-- Charts + Upcoming -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+
+        <!-- Consultas por especialidade -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Consultas por Especialidade</span>
+          </div>
+          <div style="padding:20px" id="chartEspecialidades">
+            <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+          </div>
+        </div>
+
+        <!-- Distribuição de estados -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Distribuição de Estados</span>
+          </div>
+          <div style="padding:20px" id="chartEstados">
+            <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Próximas consultas -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Próximas Consultas</span>
+          <a href="consultas.html" class="btn btn-outline btn-sm">Ver todas <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Paciente</th>
+                <th>Médico</th>
+                <th>Especialidade</th>
+                <th>Estado</th>
+                <th>Acção</th>
+              </tr>
+            </thead>
+            <tbody id="proximasBody">
+              <tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('dashboard');
+    buildTopbar('Dashboard');
+
+    async function loadDashboard() {
+      try {
+        const data = await api('GET', '/consultas/dashboard');
+        const t = data.totais;
+
+        // Stats
+        document.getElementById('statsGrid').innerHTML = `
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="background:#dbeafe;color:#1565c0"><i class="fa-solid fa-calendar-check"></i></div>
+              <span class="stat-trend up"><i class="fa-solid fa-arrow-trend-up"></i> Total</span>
+            </div>
+            <div class="stat-num">${t.total}</div>
+            <div class="stat-lbl">Total de Consultas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="background:#fef3c7;color:#92400e"><i class="fa-solid fa-clock"></i></div>
+              <span class="stat-trend ${t.pendentes > 0 ? 'down' : 'up'}"><i class="fa-solid fa-circle"></i> Hoje</span>
+            </div>
+            <div class="stat-num">${t.pendentes}</div>
+            <div class="stat-lbl">Pendentes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="background:#dcfce7;color:#166534"><i class="fa-solid fa-circle-check"></i></div>
+              <span class="stat-trend up"><i class="fa-solid fa-arrow-trend-up"></i></span>
+            </div>
+            <div class="stat-num">${t.confirmadas}</div>
+            <div class="stat-lbl">Confirmadas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon" style="background:#f3f4f6;color:#374151"><i class="fa-solid fa-calendar-day"></i></div>
+              <span class="stat-trend up"><i class="fa-solid fa-sun"></i> Hoje</span>
+            </div>
+            <div class="stat-num">${data.hoje}</div>
+            <div class="stat-lbl">Consultas Hoje</div>
+          </div>
+        `;
+
+        // Chart - Especialidades (CSS bars)
+        const maxEsp = Math.max(...data.porEspecialidade.map(e => e.total), 1);
+        document.getElementById('chartEspecialidades').innerHTML = data.porEspecialidade.length
+          ? data.porEspecialidade.map(e => `
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+              <span style="min-width:100px;font-size:0.82rem;color:var(--text-2)">${e.nome}</span>
+              <div style="flex:1;background:#f1f5f9;border-radius:100px;height:10px;overflow:hidden">
+                <div style="height:100%;background:var(--blue);border-radius:100px;width:${Math.round(e.total/maxEsp*100)}%;transition:width 0.8s ease"></div>
+              </div>
+              <span style="font-size:0.82rem;font-weight:700;color:var(--text);min-width:20px">${e.total}</span>
+            </div>`).join('')
+          : '<div class="empty-state"><i class="fa-solid fa-chart-bar"></i><p>Sem dados</p></div>';
+
+        // Chart - Estados (doughnut style with CSS)
+        const estados = [
+          { label: 'Pendentes',   val: +t.pendentes,   color: '#f59e0b' },
+          { label: 'Confirmadas', val: +t.confirmadas, color: '#22c55e' },
+          { label: 'Concluídas',  val: +t.concluidas,  color: '#3b82f6' },
+          { label: 'Canceladas',  val: +t.canceladas,  color: '#ef4444' },
+        ];
+        document.getElementById('chartEstados').innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${estados.map(e => `
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:12px;height:12px;border-radius:3px;background:${e.color};flex-shrink:0"></div>
+                <span style="flex:1;font-size:0.84rem;color:var(--text-2)">${e.label}</span>
+                <strong style="font-size:0.9rem;color:var(--text)">${e.val}</strong>
+                <div style="width:80px;background:#f1f5f9;border-radius:100px;height:8px;overflow:hidden">
+                  <div style="height:100%;background:${e.color};border-radius:100px;width:${t.total > 0 ? Math.round(e.val/t.total*100) : 0}%"></div>
+                </div>
+              </div>`).join('')}
+          </div>`;
+
+        // Próximas consultas
+        const tbody = document.getElementById('proximasBody');
+        if (!data.proximasConsultas.length) {
+          tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>Sem consultas próximas</p></div></td></tr>`;
+          return;
+        }
+        tbody.innerHTML = data.proximasConsultas.map(c => `
+          <tr>
+            <td><strong>${formatDate(c.data_hora)}</strong></td>
+            <td>${c.paciente}</td>
+            <td>${c.medico}</td>
+            <td><span style="font-size:0.82rem">${c.especialidade}</span></td>
+            <td>${estadoBadge(c.estado)}</td>
+            <td>
+              <a href="consultas.html?id=${c.id}" class="btn btn-sm btn-outline">
+                <i class="fa-solid fa-eye"></i> Ver
+              </a>
+            </td>
+          </tr>`).join('');
+
+      } catch (err) {
+        toast('Erro ao carregar dashboard: ' + err.message, 'error');
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Médicos — Hospital Vida Saudável</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Equipa Médica</span>
+          <div class="card-actions">
+            <div class="search-input">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="searchInput" placeholder="Pesquisar médico..."/>
+            </div>
+            <button class="btn btn-primary" onclick="openModal('modalNovo')">
+              <i class="fa-solid fa-plus"></i> Novo Médico
+            </button>
+          </div>
+        </div>
+        <div id="medicosGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:20px">
+          <div class="loading-spinner" style="grid-column:1/-1"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Novo Médico -->
+  <div class="modal-overlay" id="modalNovo">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalMedTitle">Novo Médico</h3>
+        <button class="modal-close" onclick="closeModal('modalNovo')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="m_id"/>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Título</label>
+            <select id="m_titulo"><option value="Dr.">Dr.</option><option value="Dra.">Dra.</option><option value="Prof. Dr.">Prof. Dr.</option></select>
+          </div>
+          <div class="form-group"><label>Nome completo *</label><input type="text" id="m_nome" placeholder="Nome"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Especialidade *</label>
+            <select id="m_esp"></select>
+          </div>
+          <div class="form-group"><label>Anos de Exp.</label><input type="number" id="m_anos" min="0" placeholder="0"/></div>
+        </div>
+        <div class="form-group"><label>Formação</label><input type="text" id="m_form" placeholder="Universidade..."/></div>
+        <div class="form-group"><label>Bio</label><textarea id="m_bio" rows="2" placeholder="Breve descrição..."></textarea></div>
+        <div class="form-group"><label>URL da Foto</label><input type="url" id="m_foto" placeholder="https://..."/></div>
+        <div class="form-group"><label>CRM / Nº Cédula</label><input type="text" id="m_crm" placeholder="Número de cédula profissional"/></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalNovo')">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarMedico()"><i class="fa-solid fa-save"></i> Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('medicos');
+    buildTopbar('Médicos');
+
+    let allMedicos = [];
+    let especialidades = [];
+
+    async function init() {
+      try {
+        especialidades = await api('GET', '/especialidades');
+        const sel = document.getElementById('m_esp');
+        sel.innerHTML = especialidades.map(e => `<option value="${e.id}">${e.nome}</option>`).join('');
+        await loadMedicos();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function loadMedicos() {
+      try {
+        allMedicos = await api('GET', '/medicos?ativo=1');
+        renderGrid(allMedicos);
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function renderGrid(list) {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = list.filter(m => !q || m.nome.toLowerCase().includes(q) || m.especialidade.toLowerCase().includes(q));
+      const grid = document.getElementById('medicosGrid');
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fa-solid fa-user-doctor"></i><p>Nenhum médico encontrado</p></div>`;
+        return;
+      }
+      grid.innerHTML = filtered.map(m => `
+        <div style="background:var(--bg);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);transition:all 0.2s" onmouseover="this.style.boxShadow='var(--shadow-md)'" onmouseout="this.style.boxShadow=''">
+          <div style="height:160px;overflow:hidden;position:relative">
+            <img src="${m.foto_url || 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80'}"
+                 style="width:100%;height:100%;object-fit:cover;object-position:top"
+                 onerror="this.src='https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80'"/>
+            <div style="position:absolute;top:10px;left:10px;background:rgba(13,33,70,0.8);color:#fff;font-size:0.7rem;font-weight:600;padding:3px 10px;border-radius:100px">${m.especialidade}</div>
+          </div>
+          <div style="padding:16px">
+            <h3 style="font-family:var(--font-display);font-size:1rem;margin-bottom:3px">${m.titulo} ${m.nome}</h3>
+            <p style="font-size:0.8rem;color:var(--text-3);margin-bottom:10px">${m.formacao || ''} · ${m.anos_experiencia} anos</p>
+            <p style="font-size:0.82rem;color:var(--text-2);line-height:1.5;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${m.bio || '—'}</p>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-sm btn-outline" onclick="editarMedico(${m.id})" style="flex:1">
+                <i class="fa-solid fa-pen"></i> Editar
+              </button>
+              <button class="btn btn-sm btn-danger btn-icon" onclick="desativarMedico(${m.id})" title="Desativar">
+                <i class="fa-solid fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function editarMedico(id) {
+      const m = allMedicos.find(x => x.id === id);
+      if (!m) return;
+      document.getElementById('modalMedTitle').textContent = 'Editar Médico';
+      document.getElementById('m_id').value    = m.id;
+      document.getElementById('m_titulo').value = m.titulo || 'Dr.';
+      document.getElementById('m_nome').value  = m.nome;
+      document.getElementById('m_esp').value   = m.especialidade_id;
+      document.getElementById('m_anos').value  = m.anos_experiencia;
+      document.getElementById('m_form').value  = m.formacao || '';
+      document.getElementById('m_bio').value   = m.bio || '';
+      document.getElementById('m_foto').value  = m.foto_url || '';
+      document.getElementById('m_crm').value   = m.crm || '';
+      openModal('modalNovo');
+    }
+
+    async function salvarMedico() {
+      const id   = document.getElementById('m_id').value;
+      const nome = document.getElementById('m_nome').value.trim();
+      const espId= document.getElementById('m_esp').value;
+      if (!nome || !espId) { toast('Nome e especialidade são obrigatórios.', 'error'); return; }
+      const dados = {
+        nome, titulo: document.getElementById('m_titulo').value,
+        especialidade_id: +espId,
+        anos_experiencia: +document.getElementById('m_anos').value || 0,
+        formacao: document.getElementById('m_form').value,
+        bio: document.getElementById('m_bio').value,
+        foto_url: document.getElementById('m_foto').value,
+        crm: document.getElementById('m_crm').value,
+        ativo: 1,
+      };
+      try {
+        if (id) { await api('PUT', `/medicos/${id}`, dados); toast('Médico actualizado!'); }
+        else    { await api('POST', '/medicos', dados); toast('Médico criado!'); }
+        closeModal('modalNovo');
+        document.getElementById('m_id').value = '';
+        loadMedicos();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function desativarMedico(id) {
+      if (!confirm('Tem a certeza que quer desativar este médico?')) return;
+      try {
+        await api('DELETE', `/medicos/${id}`);
+        toast('Médico desativado.');
+        loadMedicos();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function openModal(id) {
+      if (id === 'modalNovo' && !document.getElementById('m_id').value) {
+        document.getElementById('modalMedTitle').textContent = 'Novo Médico';
+        ['m_nome','m_anos','m_form','m_bio','m_foto','m_crm'].forEach(f => document.getElementById(f).value = '');
+      }
+      document.getElementById(id).classList.add('open');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.getElementById('searchInput').addEventListener('input', () => renderGrid(allMedicos));
+    init();
+  </script>
+</body>
+</html>
