@@ -81,31 +81,47 @@ window.addEventListener('scroll', () => {
 //   HAMBURGER MENU
 // =====================
 const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('navLinks');
+const navLinks  = document.getElementById('navLinks');
+
+function abrirMenu() {
+  navLinks.classList.add('open');
+  hamburger.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharMenu() {
+  navLinks.classList.remove('open');
+  hamburger.classList.remove('open');
+  document.body.style.overflow = '';
+}
 
 if (hamburger && navLinks) {
-  hamburger.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('open');
-    hamburger.classList.toggle('open', isOpen);
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+  // Abrir / fechar ao clicar no hamburger
+  hamburger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navLinks.classList.contains('open') ? fecharMenu() : abrirMenu();
   });
 
-  // Close on nav link click
+  // Fechar ao clicar num link
   navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      hamburger.classList.remove('open');
-      document.body.style.overflow = '';
-    });
+    link.addEventListener('click', fecharMenu);
   });
 
-  // Close on outside click
+  // Fechar ao clicar fora do menu
   document.addEventListener('click', (e) => {
-    if (!navbar.contains(e.target)) {
-      navLinks.classList.remove('open');
-      hamburger.classList.remove('open');
-      document.body.style.overflow = '';
+    if (navLinks.classList.contains('open') && !navbar.contains(e.target)) {
+      fecharMenu();
     }
+  });
+
+  // Fechar ao pressionar Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') fecharMenu();
+  });
+
+  // Fechar se o ecrã aumentar para desktop
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 680) fecharMenu();
   });
 }
 

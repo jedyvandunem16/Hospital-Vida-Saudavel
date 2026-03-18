@@ -66,4 +66,14 @@ async function iniciar() {
   });
 }
 
+const path = require('path');
+
+// Servir o Frontend
+app.use(express.static(path.join(__dirname, '../../Frontend')));
+
+// Rota principal → index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../Frontend/index.html'));
+});
 iniciar();
+
