@@ -6,7 +6,7 @@
   <title>Serviços — Hospital Vida Saudável</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 <body>
 
@@ -18,7 +18,8 @@
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Início</a></li>
-        <li><a href="servicos.html" class="active">Serviços</a></li>
+        <li><a href="hospitais.html">Hospitais</a></li>
+        <li><a href="servicos.html" class="active">Especialidades</a></li>
         <li><a href="medicos.html">Médicos</a></li>
         <li><a href="sobre.html">Sobre</a></li>
         <li><a href="contacto.html">Contacto</a></li>
@@ -27,7 +28,7 @@
         <a href="tel:+244900000000" class="nav-phone"><i class="fa-solid fa-phone"></i> +244 900 000 000</a>
         <a href="marcacao.html" class="btn-consulta">Marcar Consulta</a>
       </div>
-      <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
   </nav>
 
@@ -65,7 +66,7 @@
             <li><i class="fa-solid fa-check"></i> Cateterismo cardíaco</li>
             <li><i class="fa-solid fa-check"></i> Monitorização da pressão arterial</li>
           </ul>
-          <a href="marcacao.html?servico=cardiologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+          <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="marcacao.html?servico=cardiologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a><a href="hospitais.html?especialidade=Cardiologia" class="btn-outline">Ver hospitais <i class="fa-solid fa-hospital"></i></a></div>
         </div>
       </div>
 
@@ -88,7 +89,7 @@
             <li><i class="fa-solid fa-check"></i> Urgências pediátricas</li>
             <li><i class="fa-solid fa-check"></i> Alergologia pediátrica</li>
           </ul>
-          <a href="marcacao.html?servico=pediatria" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+          <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="marcacao.html?servico=pediatria" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a><a href="hospitais.html?especialidade=Pediatria" class="btn-outline">Ver hospitais <i class="fa-solid fa-hospital"></i></a></div>
         </div>
       </div>
 
@@ -111,7 +112,7 @@
             <li><i class="fa-solid fa-check"></i> Resultados online em 24h</li>
             <li><i class="fa-solid fa-check"></i> Colheita ao domicílio</li>
           </ul>
-          <a href="marcacao.html?servico=laboratorio" class="btn-primary">Agendar Análises <i class="fa-solid fa-arrow-right"></i></a>
+          <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="marcacao.html?servico=laboratorio" class="btn-primary">Agendar Análises <i class="fa-solid fa-arrow-right"></i></a><a href="hospitais.html?especialidade=Laboratório" class="btn-outline">Ver hospitais <i class="fa-solid fa-hospital"></i></a></div>
         </div>
       </div>
 
@@ -157,7 +158,7 @@
             <li><i class="fa-solid fa-check"></i> Fisioterapia integrada</li>
             <li><i class="fa-solid fa-check"></i> Coluna vertebral</li>
           </ul>
-          <a href="marcacao.html?servico=ortopedia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+          <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="marcacao.html?servico=ortopedia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a><a href="hospitais.html?especialidade=Ortopedia" class="btn-outline">Ver hospitais <i class="fa-solid fa-hospital"></i></a></div>
         </div>
       </div>
 
@@ -180,7 +181,59 @@
             <li><i class="fa-solid fa-check"></i> Doença de Parkinson</li>
             <li><i class="fa-solid fa-check"></i> Cefaleia e enxaqueca</li>
           </ul>
-          <a href="marcacao.html?servico=neurologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+          <div style="display:flex;gap:12px;flex-wrap:wrap"><a href="marcacao.html?servico=neurologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a><a href="hospitais.html?especialidade=Neurologia" class="btn-outline">Ver hospitais <i class="fa-solid fa-hospital"></i></a></div>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Ginecologia -->
+      <div class="svc-detail" id="ginecologia">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=80" alt="Ginecologia"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#e91e63;--cb:rgba(233,30,99,0.1)"><i class="fa-solid fa-venus"></i></div>
+          <h2>Ginecologia e Obstetrícia</h2>
+          <p>Cuidados completos de saúde da mulher, desde o acompanhamento de rotina até às situações de maior complexidade. A nossa equipa está preparada para acompanhar todas as fases da vida da mulher.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Consultas de ginecologia de rotina</li>
+            <li><i class="fa-solid fa-check"></i> Pré-natal e acompanhamento de gravidez</li>
+            <li><i class="fa-solid fa-check"></i> Ecografia obstétrica</li>
+            <li><i class="fa-solid fa-check"></i> Planeamento familiar</li>
+            <li><i class="fa-solid fa-check"></i> Colposcopia e Papanicolau</li>
+            <li><i class="fa-solid fa-check"></i> Cirurgia ginecológica</li>
+          </ul>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <a href="marcacao.html?servico=ginecologia" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="hospitais.html?especialidade=Ginecologia" class="btn-outline">Ver hospitais <i class="fa-solid fa-hospital"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="svc-divider"></div>
+
+      <!-- Maternidade -->
+      <div class="svc-detail reverse" id="maternidade">
+        <div class="svc-detail-img">
+          <img src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80" alt="Maternidade"/>
+        </div>
+        <div class="svc-detail-content">
+          <div class="svc-icon-wrap lg" style="--c:#ff7043;--cb:rgba(255,112,67,0.1)"><i class="fa-solid fa-baby-carriage"></i></div>
+          <h2>Maternidade</h2>
+          <p>Oferecemos um serviço de maternidade completo, com instalações modernas e equipa especializada para garantir um parto seguro e uma experiência positiva para a mãe e o bebé.</p>
+          <ul class="svc-features">
+            <li><i class="fa-solid fa-check"></i> Sala de parto humanizado</li>
+            <li><i class="fa-solid fa-check"></i> Parto normal e cesariana</li>
+            <li><i class="fa-solid fa-check"></i> Unidade de cuidados neonatais</li>
+            <li><i class="fa-solid fa-check"></i> Acompanhamento pós-parto</li>
+            <li><i class="fa-solid fa-check"></i> Apoio à amamentação</li>
+            <li><i class="fa-solid fa-check"></i> Consultas de puericultura</li>
+          </ul>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <a href="marcacao.html?servico=maternidade" class="btn-primary">Marcar Consulta <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="hospitais.html?especialidade=Maternidade" class="btn-outline">Ver maternidades <i class="fa-solid fa-hospital"></i></a>
+          </div>
         </div>
       </div>
 
@@ -205,6 +258,7 @@
 
   <footer class="footer" id="footer-main"></footer>
   <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
-  <script src="main.js"></script>
+  <script src="config.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

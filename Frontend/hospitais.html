@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospitais Públicos — Plataforma Vida Saudável</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+</head>
+<body>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-plus"></i></span>
+        <span class="logo-text">Vida Saudável</span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="hospitais.html" class="active">Hospitais</a></li>
+        <li><a href="servicos.html">Especialidades</a></li>
+        <li><a href="medicos.html">Médicos</a></li>
+        <li><a href="sobre.html">Sobre</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="tel:+244900000000" class="nav-phone"><i class="fa-solid fa-phone"></i> +244 900 000 000</a>
+        <a href="marcacao.html" class="btn-consulta">Marcar Consulta</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO PREMIUM -->
+  <section class="booking-hero">
+    <div class="hero-blob-1"></div>
+    <div class="hero-blob-2"></div>
+    <div class="container">
+      <div class="booking-hero-inner">
+        <div class="booking-hero-text">
+          <span class="section-tag reveal">Rede Pública de Saúde</span>
+          <h1 class="reveal" style="color:#cbd5e1;">Hospitais de <em>Luanda</em></h1>
+          <p class="reveal">Acesso universal e gratuito a cuidados de saúde de excelência em toda a província de Luanda. Encontre a unidade mais próxima e agende a sua consulta online.</p>
+          <div class="booking-info-pills reveal">
+            <span><i class="fa-solid fa-hospital-user"></i> 17 Unidades</span>
+            <span><i class="fa-solid fa-earth-africa"></i> 9 Municípios</span>
+            <span><i class="fa-solid fa-microscope"></i> Alta Tecnologia</span>
+          </div>
+        </div>
+        <div class="booking-hero-img reveal">
+          <img src="img/hospital-geral-luanda.jpg" alt="Hospitais de Luanda"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST BAR -->
+  <div style="background:#f8fafc;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;padding:14px 0;">
+    <div class="container" style="display:flex;align-items:center;justify-content:center;gap:32px;flex-wrap:wrap;">
+      <span style="display:flex;align-items:center;gap:10px;font-size:0.9rem;font-weight:600;color:#1565c0;">
+        <i class="fa-solid fa-check-double" style="color:#10b981;"></i> Sistema Integrado de Gestão Hospitalar
+      </span>
+      <span style="display:flex;align-items:center;gap:10px;font-size:0.9rem;font-weight:600;color:#475569;">
+        <i class="fa-solid fa-shield-halved" style="color:#1565c0;"></i> Dados Seguros e Actualizados
+      </span>
+      <span style="display:flex;align-items:center;gap:10px;font-size:0.9rem;font-weight:600;color:#475569;">
+        <i class="fa-solid fa-clock" style="color:#f59e0b;"></i> Rede Pública 24h
+      </span>
+    </div>
+  </div>
+  <!-- FILTROS PREMIUM -->
+  <section class="section-pad" style="padding-bottom:0; z-index: 10; position:relative;">
+    <div class="container">
+      <div class="hospitais-filtros">
+        
+        <div class="filtro-group" style="flex: 2; min-width: 250px;">
+          <label><i class="fa-solid fa-search"></i> Pesquisar</label>
+          <input type="text" id="filtroNome" placeholder="Ex: Josina Machel" class="form-input-modern"/>
+        </div>
+
+        <div class="filtro-group">
+          <label><i class="fa-solid fa-map-pin"></i> Município</label>
+          <select id="filtroMunicipio" class="form-select-modern">
+            <option value="">Qualquer município</option>
+            <option value="Ingombota">Ingombota / Luanda</option>
+            <option value="Maianga">Maianga</option>
+            <option value="Rangel">Rangel</option>
+            <option value="Sambizanga">Sambizanga</option>
+            <option value="Cazenga">Cazenga</option>
+            <option value="Viana">Viana</option>
+            <option value="Kilamba Kiaxi">Kilamba Kiaxi / Camama</option>
+            <option value="Cacuaco">Cacuaco</option>
+            <option value="Talatona">Talatona / Belas</option>
+            <option value="Luanda">Luanda (outros)</option>
+          </select>
+        </div>
+        
+        <div class="filtro-group">
+          <label><i class="fa-solid fa-stethoscope"></i> Especialidade</label>
+          <select id="filtroEspecialidade" class="form-select-modern">
+            <option value="">Todas as especialidades</option>
+          </select>
+        </div>
+        
+        <div class="filtro-acoes">
+          <button class="btn-primary" id="btnFiltrar" type="button">
+            <i class="fa-solid fa-filter"></i> Filtrar
+          </button>
+          <button class="btn-outline sm" id="btnLimpar" type="button">
+            <i class="fa-solid fa-rotate-right"></i> Limpar
+          </button>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- LISTA DE HOSPITAIS -->
+  <section class="section-pad">
+    <div class="container">
+      <div id="hospitaisInfo" style="margin-bottom:20px;font-size:0.9rem;color:#718096"></div>
+      <div class="hospitais-grid" id="hospitaisGrid">
+        <!-- Loading state -->
+        <div style="grid-column:1/-1;text-align:center;padding:48px;color:#718096">
+          <i class="fa-solid fa-circle-notch fa-spin" style="font-size:2rem;color:#1565c0"></i>
+          <p style="margin-top:12px">A carregar hospitais...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE DETALHE DO HOSPITAL -->
+  <div class="modal-overlay" id="hospitalModal" style="display:none">
+    <div class="modal-box">
+      <button class="modal-close" id="modalClose"><i class="fa-solid fa-xmark"></i></button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <footer class="footer" id="footer-main"></footer>
+  <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
+
+  <script src="js/main.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/hospitais.js"></script>
+</body>
+</html>

@@ -18,7 +18,8 @@
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="index.html">Início</a></li>
-        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="hospitais.html">Hospitais</a></li>
+        <li><a href="servicos.html">Especialidades</a></li>
         <li><a href="medicos.html" class="active">Médicos</a></li>
         <li><a href="sobre.html">Sobre</a></li>
         <li><a href="contacto.html">Contacto</a></li>
@@ -46,14 +47,8 @@
   <!-- FILTER BAR -->
   <section class="filter-section">
     <div class="container">
-      <div class="filter-bar">
+      <div class="filter-bar" id="filterBar">
         <button class="filter-btn active" data-filter="all">Todos</button>
-        <button class="filter-btn" data-filter="cardiologia">Cardiologia</button>
-        <button class="filter-btn" data-filter="pediatria">Pediatria</button>
-        <button class="filter-btn" data-filter="geral">Clínica Geral</button>
-        <button class="filter-btn" data-filter="ortopedia">Ortopedia</button>
-        <button class="filter-btn" data-filter="neurologia">Neurologia</button>
-        <button class="filter-btn" data-filter="laboratorio">Laboratório</button>
       </div>
     </div>
   </section>
@@ -61,11 +56,12 @@
   <!-- DOCTORS GRID -->
   <section class="section-pad pt-low">
     <div class="container">
+
       <div class="doctors-full-grid" id="doctorsGrid">
 
         <div class="doc-full-card" data-specialty="cardiologia">
           <div class="doc-full-img">
-            <img src="img/joao.avif" alt="Dr. João Silva"/>
+            <img src="img/João.avif" alt="Dr. João Silva"/>
             <span class="doc-badge">Cardiologia</span>
           </div>
           <div class="doc-full-info">
@@ -193,31 +189,8 @@
 
   <footer class="footer" id="footer-main"></footer>
   <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
- <script src="main.js"></script>
-<script>
-  window.addEventListener('load', function() {
-    const s = document.createElement('script');
-    s.src = 'api.js';
-    document.body.appendChild(s);
-  });
-</script>
-  <script>
-    // Filter functionality
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const filter = this.dataset.filter;
-        const cards = document.querySelectorAll('.doc-full-card');
-        let visible = 0;
-        cards.forEach(card => {
-          const show = filter === 'all' || card.dataset.specialty === filter;
-          card.style.display = show ? '' : 'none';
-          if(show) visible++;
-        });
-        document.getElementById('noResults').classList.toggle('hidden', visible > 0);
-      });
-    });
-  </script>
+ <script src="js/main.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/medicos.js"></script>
 </body>
 </html>

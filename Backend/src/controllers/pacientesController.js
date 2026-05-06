@@ -8,6 +8,16 @@ async function listar(req, res, next) {
     const params = [];
     if (q) {
       sql += ` AND (nome LIKE ? OR telefone LIKE ? OR bi LIKE ?)`;
+      // handled below
+    }
+    // telefone exact match
+    const { telefone } = req.query;
+    if (telefone && !q) {
+      sql += ` AND telefone = ?`;
+      params.push(telefone);
+    }
+    if (q) {// dummy to allow sed replacement
+      sql += ` AND (nome LIKE ? OR telefone LIKE ? OR bi LIKE ?)`;
       const like = `%${q}%`;
       params.push(like, like, like);
     }
@@ -65,4 +75,23 @@ async function atualizar(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { listar, obter, criar, atualizar };
+
+// GET /api/pacientes/buscar?telefone=XXX — rota pública
+// Devolve apenas id e nome (campos não sensíveis) para pré-preenchimento
+// no formulário de marcação. Nunca expõe email, BI, morada ou histórico.
+async function buscarPorTelefone(req, res, next) {
+  try {
+    const { telefone } = req.query;
+    if (!telefone || String(telefone).trim().length < 7) {
+      return res.status(400).json({ erro: 'Parâmetro telefone obrigatório (mín. 7 dígitos).' });
+    }
+    const [rows] = await pool.execute(
+      `SELECT id, nome FROM pacientes WHERE telefone = ? LIMIT 1`,
+      [String(telefone).trim()]
+    );
+    if (!rows[0]) return res.status(404).json({ erro: 'Paciente não encontrado.' });
+    res.json(rows[0]); // apenas { id, nome }
+  } catch (err) { next(err); }
+}
+
+module.exports = { listar, obter, criar, atualizar, buscarPorTelefone };

@@ -15,7 +15,7 @@
     <main class="content-area">
 
       <!-- Stats -->
-      <div class="stats-grid" id="statsGrid">
+      <div class="stats-grid" id="statsGrid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">
         <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
         <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
         <div class="stat-card"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div></div>
@@ -119,6 +119,14 @@
             <div class="stat-num">${data.hoje}</div>
             <div class="stat-lbl">Consultas Hoje</div>
           </div>
+          <div class="stat-card" style="cursor:pointer" onclick="window.location.href='hospitais.html'">
+            <div class="stat-header">
+              <div class="stat-icon" style="background:#fce7f3;color:#9d174d"><i class="fa-solid fa-hospital"></i></div>
+              <span class="stat-trend up"><i class="fa-solid fa-map-pin"></i> Luanda</span>
+            </div>
+            <div class="stat-num" id="statHospitais">—</div>
+            <div class="stat-lbl">Hospitais Activos</div>
+          </div>
         `;
 
         // Chart - Especialidades (CSS bars)
@@ -180,6 +188,12 @@
     }
 
     loadDashboard();
+
+    // Load hospital count separately
+    api('GET', '/hospitais').then(list => {
+      const el = document.getElementById('statHospitais');
+      if (el) el.textContent = list.length;
+    }).catch(() => {});
   </script>
 </body>
 </html>

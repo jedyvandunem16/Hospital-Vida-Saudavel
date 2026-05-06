@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospitais — Painel Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-hospital" style="color:var(--blue)"></i> Hospitais Públicos de Luanda</span>
+          <div class="card-actions">
+            <div class="search-input">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="searchInput" placeholder="Pesquisar hospital..."/>
+            </div>
+            <select class="filter-select" id="filtroMunicipio">
+              <option value="">Todos os municípios</option>
+              <option value="Ingombota">Ingombota</option>
+              <option value="Maianga">Maianga</option>
+              <option value="Sambizanga">Sambizanga</option>
+              <option value="Cazenga">Cazenga</option>
+              <option value="Viana">Viana</option>
+            </select>
+            <select class="filter-select" id="filtroTipo">
+              <option value="">Todos os tipos</option>
+              <option value="geral">Hospital Geral</option>
+              <option value="especializado">Especializado</option>
+              <option value="maternidade">Maternidade</option>
+              <option value="pediatrico">Pediátrico</option>
+              <option value="referencia">Referência</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModalNovo()">
+              <i class="fa-solid fa-plus"></i> Novo Hospital
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats rápidos -->
+        <div id="hospitaisStats" style="display:flex;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap"></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Hospital</th>
+                <th>Município</th>
+                <th>Tipo</th>
+                <th>Especialidades</th>
+                <th>Telefone</th>
+                <th>Acções</th>
+              </tr>
+            </thead>
+            <tbody id="hospitaisBody">
+              <tr><td colspan="7"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid var(--border);font-size:0.82rem;color:var(--text-3)" id="tableInfo"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Modal: Ver / Editar Hospital -->
+  <div class="modal-overlay" id="modalHospital">
+    <div class="modal" style="max-width:640px">
+      <div class="modal-header">
+        <h3 id="modalHospitalTitle">Hospital</h3>
+        <button class="modal-close" onclick="closeModal('modalHospital')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="modalHospitalBody"></div>
+      <div class="modal-footer" id="modalHospitalFooter"></div>
+    </div>
+  </div>
+
+  <!-- Modal: Novo Hospital -->
+  <div class="modal-overlay" id="modalNovo">
+    <div class="modal" style="max-width:640px">
+      <div class="modal-header">
+        <h3>Novo Hospital</h3>
+        <button class="modal-close" onclick="closeModal('modalNovo')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group" style="flex:2">
+            <label>Nome do hospital *</label>
+            <input type="text" id="n_nome" placeholder="Ex: Hospital Geral de Luanda"/>
+          </div>
+          <div class="form-group">
+            <label>Tipo *</label>
+            <select id="n_tipo">
+              <option value="geral">Hospital Geral</option>
+              <option value="especializado">Especializado</option>
+              <option value="referencia">Referência</option>
+              <option value="maternidade">Maternidade</option>
+              <option value="pediatrico">Pediátrico</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Município *</label>
+            <select id="n_municipio">
+              <option value="Ingombota">Ingombota</option>
+              <option value="Maianga">Maianga</option>
+              <option value="Sambizanga">Sambizanga</option>
+              <option value="Cazenga">Cazenga</option>
+              <option value="Viana">Viana</option>
+              <option value="Kilamba Kiaxi">Kilamba Kiaxi</option>
+              <option value="Cacuaco">Cacuaco</option>
+              <option value="Belas">Belas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Telefone</label>
+            <input type="tel" id="n_telefone" placeholder="+244 222 000 000"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Morada</label>
+          <input type="text" id="n_morada" placeholder="Ex: Av. Lenine, Nº 123, Ingombota"/>
+        </div>
+        <div class="form-group">
+          <label>URL da Foto</label>
+          <input type="url" id="n_foto" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <textarea id="n_descricao" rows="3" placeholder="Breve descrição do hospital..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Especialidades disponíveis</label>
+          <div id="n_especialidades" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px">
+            <div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('modalNovo')">Cancelar</button>
+        <button class="btn btn-primary" onclick="criarHospital()">
+          <i class="fa-solid fa-save"></i> Criar Hospital
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('hospitais');
+    buildTopbar('Hospitais');
+
+    const TIPO_LABEL = {
+      geral:        'Hospital Geral',
+      especializado:'Especializado',
+      referencia:   'Referência',
+      maternidade:  'Maternidade',
+      pediatrico:   'Pediátrico',
+    };
+    const TIPO_COLOR = {
+      geral:'#1565c0', especializado:'#7b1fa2', referencia:'#e53935',
+      maternidade:'#e91e63', pediatrico:'#f9a825',
+    };
+
+    let todosHospitais = [];
+    let todasEspecialidades = [];
+
+    // ── Carregar ──────────────────────────────────────────────────────────────
+    async function load() {
+      try {
+        [todosHospitais, todasEspecialidades] = await Promise.all([
+          api('GET', '/hospitais'),
+          api('GET', '/especialidades'),
+        ]);
+        renderStats();
+        renderTable(todosHospitais);
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function renderStats() {
+      const stats = document.getElementById('hospitaisStats');
+      const tipos = {};
+      todosHospitais.forEach(h => { tipos[h.tipo] = (tipos[h.tipo] || 0) + 1; });
+
+      stats.innerHTML = [
+        { label: 'Total', valor: todosHospitais.length, icon: 'fa-hospital', cor: '#1565c0' },
+        { label: 'Municipios', valor: new Set(todosHospitais.map(h=>h.municipio)).size, icon: 'fa-map-pin', cor: '#00897b' },
+        { label: 'Maternidades', valor: tipos.maternidade || 0, icon: 'fa-baby-carriage', cor: '#e91e63' },
+        { label: 'Pediátricos', valor: tipos.pediatrico || 0, icon: 'fa-baby', cor: '#f9a825' },
+      ].map(s => `
+        <div style="display:flex;align-items:center;gap:10px;background:var(--bg);padding:10px 16px;border-radius:10px;min-width:130px">
+          <div style="width:36px;height:36px;background:${s.cor}18;border-radius:8px;display:flex;align-items:center;justify-content:center;color:${s.cor}">
+            <i class="fa-solid ${s.icon}"></i>
+          </div>
+          <div>
+            <div style="font-size:1.2rem;font-weight:700;color:var(--text)">${s.valor}</div>
+            <div style="font-size:0.72rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.04em">${s.label}</div>
+          </div>
+        </div>`).join('');
+    }
+
+    function renderTable(lista) {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const mun    = document.getElementById('filtroMunicipio').value;
+      const tipo   = document.getElementById('filtroTipo').value;
+
+      let filtered = lista.filter(h => {
+        if (search && !h.nome.toLowerCase().includes(search) && !h.municipio.toLowerCase().includes(search)) return false;
+        if (mun  && h.municipio !== mun)  return false;
+        if (tipo && h.tipo      !== tipo) return false;
+        return true;
+      });
+
+      document.getElementById('tableInfo').textContent = `${filtered.length} hospital(is) encontrado(s)`;
+
+      if (!filtered.length) {
+        document.getElementById('hospitaisBody').innerHTML =
+          `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-hospital-slash"></i><p>Nenhum hospital encontrado</p></div></td></tr>`;
+        return;
+      }
+
+      const cor = t => TIPO_COLOR[t] || '#1565c0';
+
+      document.getElementById('hospitaisBody').innerHTML = filtered.map(h => {
+        const espTags = (h.especialidades || []).slice(0, 3).map(e =>
+          `<span style="font-size:0.7rem;background:${e.cor}18;color:${e.cor};padding:2px 7px;border-radius:10px;white-space:nowrap">${e.nome}</span>`
+        ).join('') + (h.especialidades?.length > 3 ? `<span style="font-size:0.7rem;color:var(--text-3)">+${h.especialidades.length-3}</span>` : '');
+
+        return `
+          <tr>
+            <td style="color:var(--text-3);font-size:0.8rem">${h.id}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="${h.foto_url || 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=60&q=60'}"
+                     style="width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0"
+                     onerror="this.style.display='none'"/>
+                <div>
+                  <div style="font-weight:600;font-size:0.88rem">${h.nome}</div>
+                  ${h.morada ? `<div style="font-size:0.74rem;color:var(--text-3)">${h.morada.substring(0,40)}${h.morada.length>40?'...':''}</div>` : ''}
+                </div>
+              </div>
+            </td>
+            <td>
+              <span style="font-size:0.84rem;font-weight:600">
+                <i class="fa-solid fa-map-pin" style="color:var(--blue);margin-right:4px"></i>${h.municipio}
+              </span>
+            </td>
+            <td>
+              <span style="font-size:0.76rem;font-weight:700;background:${cor(h.tipo)}18;color:${cor(h.tipo)};padding:3px 9px;border-radius:20px">
+                ${TIPO_LABEL[h.tipo] || h.tipo}
+              </span>
+            </td>
+            <td><div style="display:flex;flex-wrap:wrap;gap:4px;max-width:200px">${espTags}</div></td>
+            <td style="font-size:0.84rem">${h.telefone || '—'}</td>
+            <td>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-sm btn-outline btn-icon" onclick="verHospital(${h.id})" title="Ver / Editar">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+                <a href="../hospitais.html" target="_blank" class="btn btn-sm btn-outline btn-icon" title="Ver no site">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+              </div>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    // ── Ver / Editar hospital ─────────────────────────────────────────────────
+    async function verHospital(id) {
+      try {
+        const h = await api('GET', `/hospitais/${id}`);
+        document.getElementById('modalHospitalTitle').textContent = h.nome;
+
+        const espChecks = todasEspecialidades.map(e => {
+          const checked = (h.especialidades || []).some(he => he.id === e.id);
+          return `
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;cursor:pointer;padding:4px 0">
+              <input type="checkbox" value="${e.id}" ${checked ? 'checked' : ''} class="esp-check-edit"/>
+              <span style="color:${e.cor}"><i class="fa-solid ${e.icone}"></i></span> ${e.nome}
+            </label>`;
+        }).join('');
+
+        document.getElementById('modalHospitalBody').innerHTML = `
+          <div class="form-row">
+            <div class="form-group" style="flex:2">
+              <label>Nome *</label>
+              <input type="text" id="e_nome" value="${h.nome}"/>
+            </div>
+            <div class="form-group">
+              <label>Tipo</label>
+              <select id="e_tipo">
+                ${Object.entries(TIPO_LABEL).map(([v,l])=>`<option value="${v}" ${h.tipo===v?'selected':''}>${l}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Município</label>
+              <input type="text" id="e_municipio" value="${h.municipio}"/>
+            </div>
+            <div class="form-group">
+              <label>Telefone</label>
+              <input type="tel" id="e_telefone" value="${h.telefone || ''}"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Morada</label>
+            <input type="text" id="e_morada" value="${h.morada || ''}"/>
+          </div>
+          <div class="form-group">
+            <label>URL da Foto</label>
+            <input type="url" id="e_foto" value="${h.foto_url || ''}"/>
+          </div>
+          <div class="form-group">
+            <label>Descrição</label>
+            <textarea id="e_descricao" rows="3">${h.descricao || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Especialidades</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:8px;max-height:200px;overflow-y:auto;padding:10px;background:var(--bg);border-radius:8px">
+              ${espChecks}
+            </div>
+          </div>`;
+
+        document.getElementById('modalHospitalFooter').innerHTML = `
+          <button class="btn btn-outline" onclick="closeModal('modalHospital')">Fechar</button>
+          <button class="btn btn-primary" onclick="guardarHospital(${h.id})">
+            <i class="fa-solid fa-save"></i> Guardar
+          </button>`;
+
+        openModal('modalHospital');
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    async function guardarHospital(id) {
+      const espIds = [...document.querySelectorAll('.esp-check-edit:checked')].map(c => +c.value);
+      try {
+        await api('PUT', `/hospitais/${id}`, {
+          nome:           document.getElementById('e_nome').value,
+          tipo:           document.getElementById('e_tipo').value,
+          municipio:      document.getElementById('e_municipio').value,
+          telefone:       document.getElementById('e_telefone').value,
+          morada:         document.getElementById('e_morada').value,
+          foto_url:       document.getElementById('e_foto').value,
+          descricao:      document.getElementById('e_descricao').value,
+          especialidade_ids: espIds,
+        });
+        toast('Hospital actualizado com sucesso!');
+        closeModal('modalHospital');
+        load();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    // ── Criar hospital ────────────────────────────────────────────────────────
+    async function openModalNovo() {
+      // Renderizar checkboxes de especialidades
+      document.getElementById('n_especialidades').innerHTML = todasEspecialidades.map(e => `
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;cursor:pointer;background:var(--bg);padding:5px 10px;border-radius:8px">
+          <input type="checkbox" value="${e.id}" class="esp-check-novo"/>
+          <span style="color:${e.cor}"><i class="fa-solid ${e.icone}"></i></span> ${e.nome}
+        </label>`).join('');
+      openModal('modalNovo');
+    }
+
+    async function criarHospital() {
+      const nome = document.getElementById('n_nome').value.trim();
+      const municipio = document.getElementById('n_municipio').value;
+      if (!nome || !municipio) { toast('Nome e município são obrigatórios.', 'error'); return; }
+      const espIds = [...document.querySelectorAll('.esp-check-novo:checked')].map(c => +c.value);
+      try {
+        await api('POST', '/hospitais', {
+          nome, municipio,
+          tipo:       document.getElementById('n_tipo').value,
+          telefone:   document.getElementById('n_telefone').value,
+          morada:     document.getElementById('n_morada').value,
+          foto_url:   document.getElementById('n_foto').value,
+          descricao:  document.getElementById('n_descricao').value,
+          especialidade_ids: espIds,
+        });
+        toast('Hospital criado com sucesso!');
+        closeModal('modalNovo');
+        load();
+      } catch (err) { toast('Erro: ' + err.message, 'error'); }
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // Filtros
+    document.getElementById('searchInput').addEventListener('input', () => renderTable(todosHospitais));
+    document.getElementById('filtroMunicipio').addEventListener('change', () => renderTable(todosHospitais));
+    document.getElementById('filtroTipo').addEventListener('change', () => renderTable(todosHospitais));
+
+    load();
+  </script>
+</body>
+</html>
