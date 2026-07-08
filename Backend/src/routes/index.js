@@ -1,4 +1,4 @@
-const express    = require('express');
+﻿const express    = require('express');
 const rateLimit  = require('express-rate-limit');
 const { body }   = require('express-validator');
 const { autenticar, autorizar } = require('../middleware/auth');
@@ -10,7 +10,7 @@ const consultasCtrl      = require('../controllers/consultasController');
 const pacientesCtrl      = require('../controllers/pacientesController');
 const mensagensCtrl      = require('../controllers/mensagensController');
 const especialidadesCtrl = require('../controllers/especialidadesController');
-const hospitaisCtrl      = require('../controllers/hospitaisController');
+const hospitaisCtrl      = require('../controllers/hospitaiscontroller');
 
 const router = express.Router();
 
@@ -75,6 +75,8 @@ router.post('/consultas', marcacaoLimiter,
   body('paciente_telefone').notEmpty().withMessage('Telefone obrigatório'),
   body('medico_id').isInt().withMessage('Médico obrigatório'),
   body('especialidade_id').isInt().withMessage('Especialidade obrigatória'),
+  body('hospital_id').isInt().withMessage('Hospital obrigatório'),
+
   body('data_hora').isISO8601().withMessage('Data/hora inválida'),
   validar, consultasCtrl.criar
 );
@@ -91,7 +93,6 @@ router.delete('/consultas/:id', autenticar, autorizar('admin','recepcao'), consu
 //
 //   GET /pacientes — protegida (admin/recepcao), devolve todos os campos
 router.get('/pacientes/buscar',
-  body('telefone').notEmpty(), // validação de query não usa body(), ver nota abaixo
   pacientesCtrl.buscarPorTelefone   // novo método no controller — ver abaixo
 );
 router.get('/pacientes',     autenticar, autorizar('admin','recepcao'), pacientesCtrl.listar);

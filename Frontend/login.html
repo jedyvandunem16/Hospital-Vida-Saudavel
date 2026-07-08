@@ -193,8 +193,11 @@
     </div>
   </div>
 
+  <script src="config.js"></script>
   <script>
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = (typeof CONFIG !== 'undefined' && CONFIG.API_URL)
+      ? CONFIG.API_URL
+      : 'http://localhost:3001/api';
 
     // Toggle password visibility
     document.getElementById('togglePass').addEventListener('click', function() {
@@ -248,8 +251,8 @@
         if (!res.ok) throw new Error(data.erro || 'Erro ao entrar.');
 
         // Guardar token e utilizador
-        localStorage.setItem('hvs_token', data.token);
-        localStorage.setItem('hvs_user', JSON.stringify(data.utilizador));
+        sessionStorage.setItem('hvs_token', data.token);
+        sessionStorage.setItem('hvs_user', JSON.stringify(data.utilizador));
 
         // Redirecionar para o painel
         window.location.href = 'admin/dashboard.html';
@@ -263,7 +266,7 @@
     });
 
     // Se já está logado, redirecionar
-    if (localStorage.getItem('hvs_token')) {
+    if (sessionStorage.getItem('hvs_token')) {
       window.location.href = 'admin/dashboard.html';
     }
   </script>

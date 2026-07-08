@@ -20,9 +20,10 @@ async function testConnection() {
     const conn = await pool.getConnection();
     console.log('✅  MySQL conectado com sucesso');
     conn.release();
+    return true;
   } catch (err) {
     console.error('❌  Erro ao conectar ao MySQL:', err.message);
-    process.exit(1);
+    return false;
   }
 }
 

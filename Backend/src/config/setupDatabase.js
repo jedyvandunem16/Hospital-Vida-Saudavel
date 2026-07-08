@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Script de configuração da base de dados
  * Cria todas as tabelas e insere dados iniciais
  * Executar com: npm run db:setup
@@ -84,18 +84,6 @@ async function setup() {
   `);
   console.log('✅  Tabela hospital_especialidades');
 
-  // ── RELAÇÃO HOSPITAL ↔ MÉDICOS ───────────────────────────────────────────
-  await conn.execute(`
-    CREATE TABLE IF NOT EXISTS hospital_medicos (
-      hospital_id INT NOT NULL,
-      medico_id   INT NOT NULL,
-      PRIMARY KEY (hospital_id, medico_id),
-      FOREIGN KEY (hospital_id) REFERENCES hospitais(id) ON DELETE CASCADE,
-      FOREIGN KEY (medico_id)   REFERENCES medicos(id)   ON DELETE CASCADE
-    ) ENGINE=InnoDB
-  `);
-  console.log('✅  Tabela hospital_medicos');
-
   await conn.execute(`
     CREATE TABLE IF NOT EXISTS medicos (
       id               INT AUTO_INCREMENT PRIMARY KEY,
@@ -116,6 +104,18 @@ async function setup() {
     ) ENGINE=InnoDB
   `);
   console.log('✅  Tabela medicos');
+
+  // ── RELAÇÃO HOSPITAL ↔ MÉDICOS ───────────────────────────────────────────
+  await conn.execute(`
+    CREATE TABLE IF NOT EXISTS hospital_medicos (
+      hospital_id INT NOT NULL,
+      medico_id   INT NOT NULL,
+      PRIMARY KEY (hospital_id, medico_id),
+      FOREIGN KEY (hospital_id) REFERENCES hospitais(id) ON DELETE CASCADE,
+      FOREIGN KEY (medico_id)   REFERENCES medicos(id)   ON DELETE CASCADE
+    ) ENGINE=InnoDB
+  `);
+  console.log('✅  Tabela hospital_medicos');
 
   await conn.execute(`
     CREATE TABLE IF NOT EXISTS disponibilidade (
@@ -160,12 +160,15 @@ async function setup() {
       tipo             ENUM('presencial','online') NOT NULL DEFAULT 'presencial',
       motivo           TEXT,
       notas_medico     TEXT,
+      cancelado_por    INT NULL,
+      cancelado_em     DATETIME NULL,
       criado_em        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       atualizado_em    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       FOREIGN KEY (paciente_id)      REFERENCES pacientes(id),
       FOREIGN KEY (medico_id)        REFERENCES medicos(id),
       FOREIGN KEY (especialidade_id) REFERENCES especialidades(id),
-      FOREIGN KEY (hospital_id)      REFERENCES hospitais(id) ON DELETE SET NULL
+      FOREIGN KEY (hospital_id)      REFERENCES hospitais(id) ON DELETE SET NULL,
+      FOREIGN KEY (cancelado_por)    REFERENCES utilizadores(id) ON DELETE SET NULL
     ) ENGINE=InnoDB
   `);
   console.log('✅  Tabela consultas');
@@ -180,6 +183,22 @@ async function setup() {
     }
   } catch (err) {
     console.warn('⚠️  Aviso ao verificar coluna hospital_id:', err.message);
+  }
+
+  try {
+    const [canceladoPorCols] = await conn.query("SHOW COLUMNS FROM consultas LIKE 'cancelado_por'");
+    if (canceladoPorCols.length === 0) {
+      await conn.execute('ALTER TABLE consultas ADD COLUMN cancelado_por INT NULL AFTER notas_medico');
+      console.log('✅  Coluna cancelado_por adicionada à tabela consultas');
+    }
+
+    const [canceladoEmCols] = await conn.query("SHOW COLUMNS FROM consultas LIKE 'cancelado_em'");
+    if (canceladoEmCols.length === 0) {
+      await conn.execute('ALTER TABLE consultas ADD COLUMN cancelado_em DATETIME NULL AFTER cancelado_por');
+      console.log('✅  Coluna cancelado_em adicionada à tabela consultas');
+    }
+  } catch (err) {
+    console.warn('⚠️  Aviso ao verificar colunas de cancelamento:', err.message);
   }
 
   await conn.execute(`
@@ -214,6 +233,9 @@ async function setup() {
     ['Maternidade',    'Parto, pré-natal e pós-natal',                        'fa-baby-carriage', '#ff7043'],
     ['Cirurgia Geral', 'Cirurgias de média e grande complexidade',             'fa-scalpel',       '#546e7a'],
     ['Cardiovascular e Torácica', 'Cirurgia torácica e doenças cardiovasculares', 'fa-heart-pulse', '#d32f2f'],
+    // NEW SPECIALTIES
+    ['Endocrinologia', 'Distúrbios hormonais e metabólicos', 'fa-hashtag', '#ff9800'],
+    ['Radiologia', 'Diagnóstico por imagem e radioterapia', 'fa-x-ray', '#ff5722'],
     ['Maxilo-Facial', 'Cirurgia da face e cavidade oral', 'fa-face-smile', '#7b1fa2'],
     ['Hematologia', 'Doenças do sangue e órgãos hematopoiéticos', 'fa-droplet', '#c62828'],
     ['Infectologia', 'Doenças infecto-contagiosas', 'fa-virus', '#2e7d32'],
@@ -468,9 +490,11 @@ async function setup() {
       [h.nome, h.municipio, h.tipo, h.morada, h.telefone, h.foto_url, h.descricao]
     );
 
-    const hospitalId = rH.insertId || (
-      await conn.execute(`SELECT id FROM hospitais WHERE nome = ?`, [h.nome])
-    ).then ? null : (await conn.execute(`SELECT id FROM hospitais WHERE nome = ?`, [h.nome]))[0]?.[0]?.id;
+    let hospitalId = rH.insertId;
+    if (!hospitalId) {
+      const [[hospitalRow]] = await conn.execute(`SELECT id FROM hospitais WHERE nome = ?`, [h.nome]);
+      hospitalId = hospitalRow?.id;
+    }
 
     if (!hospitalId) continue;
 
@@ -500,13 +524,13 @@ async function setup() {
 
   // Médicos de exemplo
   const medicosData = [
-    { nome: 'Dr. João Silva',    titulo: 'Dr.',  esp: 'Cardiologia',   anos: 15, foto: 'img/João.avif' },
-    { nome: 'Dra. Ana Costa',    titulo: 'Dra.', esp: 'Pediatria',     anos: 12, foto: 'img/Ana.avif' },
-    { nome: 'Dr. Pedro Santos',  titulo: 'Dr.',  esp: 'Clínica Geral', anos: 10, foto: 'img/pedro.avif' },
-    { nome: 'Dr. Manuel Lopes',  titulo: 'Dr.',  esp: 'Ortopedia',     anos: 18, foto: 'img/Emanuel.avif' },
-    { nome: 'Dra. Sofia Neves',  titulo: 'Dra.', esp: 'Neurologia',    anos: 14, foto: 'img/sofia.avif' },
-    { nome: 'Dra. Carla Mendes', titulo: 'Dra.', esp: 'Ginecologia',   anos: 11, foto: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80' },
-    { nome: 'Dr. Rui Cardoso',   titulo: 'Dr.',  esp: 'Laboratório',   anos: 20, foto: 'img/rui.avif' },
+    { nome: 'Dr. João Silva',    titulo: 'Dr.',  esp: 'Cardiologia',   anos: 15, foto: 'img/medico_4.jpg' },
+    { nome: 'Dra. Ana Costa',    titulo: 'Dra.', esp: 'Pediatria',     anos: 12, foto: 'img/medica_1.jpg' },
+    { nome: 'Dr. Pedro Santos',  titulo: 'Dr.',  esp: 'Clínica Geral', anos: 10, foto: 'img/medico_5.webp' },
+    { nome: 'Dr. Manuel Lopes',  titulo: 'Dr.',  esp: 'Ortopedia',     anos: 18, foto: 'img/medico_9.jpg' },
+    { nome: 'Dra. Sofia Neves',  titulo: 'Dra.', esp: 'Neurologia',    anos: 14, foto: 'img/medica_2.jpg' },
+    { nome: 'Dra. Carla Mendes', titulo: 'Dra.', esp: 'Ginecologia',   anos: 11, foto: 'img/medica_7.jpg' },
+    { nome: 'Dr. Rui Cardoso',   titulo: 'Dr.',  esp: 'Laboratório',   anos: 20, foto: 'img/medico_10.jpg' },
   ];
 
   for (const m of medicosData) {
@@ -525,6 +549,15 @@ async function setup() {
     }
   }
   console.log('✅  Médicos inseridos');
+  await conn.execute(`DELETE hm FROM hospital_medicos hm JOIN medicos m ON hm.medico_id = m.id`);
+  await conn.execute(
+    `INSERT IGNORE INTO hospital_medicos (hospital_id, medico_id)
+     SELECT he.hospital_id, m.id
+     FROM hospital_especialidades he
+     JOIN medicos m ON m.especialidade_id = he.especialidade_id
+     WHERE m.ativo = 1`
+  );
+  console.log('✅  Médicos associados aos hospitais');
 
 
   // Disponibilidade padrão
@@ -554,6 +587,7 @@ async function setup() {
 }
 
 setup().catch(err => {
-  console.error('❌  Erro no setup:', err.message);
+  console.error('❌  Erro no setup:', err.message || err.sqlMessage || err.code || err);
+  if (err.stack) console.error(err.stack);
   process.exit(1);
 });

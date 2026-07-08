@@ -1,4 +1,4 @@
-/**
+﻿/**
  * api.js — Ligação Frontend ↔ Backend
  * Hospital Vida Saudável — Luanda, Angola
  */
@@ -74,11 +74,50 @@ if (document.getElementById('specialtyGrid')) {
   const preEspId        = urlParams.get('especialidade_id');
   const preEspNome      = urlParams.get('especialidade_nome');
 
+  const HOSPITAIS_MOCK = [
+    { id: 1, nome: 'Hospital Central Boa Vida', municipio: 'Maianga', especialidades: [
+      { id: 1, nome: 'Cardiologia' }, { id: 2, nome: 'Pediatria' }, { id: 12, nome: 'Cirurgia Geral' }, { id: 24, nome: 'Medicina Interna' }
+    ] },
+    { id: 2, nome: 'Hospital Municipal Nova Esperanca', municipio: 'Viana', especialidades: [
+      { id: 3, nome: 'Clinica Geral' }, { id: 4, nome: 'Urgencia' }, { id: 5, nome: 'Ortopedia' }, { id: 2, nome: 'Pediatria' }
+    ] },
+    { id: 3, nome: 'Centro Hospitalar Horizonte', municipio: 'Kilamba Kiaxi', especialidades: [
+      { id: 9, nome: 'Ginecologia' }, { id: 11, nome: 'Maternidade' }, { id: 10, nome: 'Oftalmologia' }, { id: 27, nome: 'Fisioterapia' }
+    ] },
+    { id: 4, nome: 'Hospital Comunitario da Paz', municipio: 'Cazenga', especialidades: [
+      { id: 33, nome: 'Medicina Geral' }, { id: 8, nome: 'Dermatologia' }, { id: 6, nome: 'Neurologia' }, { id: 32, nome: 'Nutricao' }
+    ] },
+  ];
+
   const sel = {
     hospitalId: preHospitalId || null, hospitalNome: preHospitalNome || null,
     specNome: preEspNome || null, specId: preEspId || null,
     medicoId: null, medicoNome: null, date: null, time: null,
   };
+
+  let hospitaisDisponiveis = [];
+
+  function setSummary(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value || '---';
+  }
+
+  function resetAfterHospitalChange() {
+    sel.specNome = null;
+    sel.specId = null;
+    sel.medicoId = null;
+    sel.medicoNome = null;
+    sel.date = null;
+    sel.time = null;
+    setSummary('sum-spec', '---');
+    setSummary('sum-doc', '---');
+    setSummary('sum-date', '---');
+    setSummary('sum-time', '---');
+    document.getElementById('step1Next').disabled = true;
+    document.getElementById('step2Next').disabled = true;
+    document.getElementById('medicoSelect').innerHTML = '<option value="">Escolha primeiro hospital e especialidade</option>';
+    document.getElementById('dataConsulta').value = '';
+  }
 
   // Banner de hospital pré-selecionado
   if (preHospitalNome) {
@@ -101,11 +140,51 @@ if (document.getElementById('specialtyGrid')) {
     window.scrollTo({ top: document.querySelector('.booking-section').offsetTop - 80, behavior: 'smooth' });
   }
 
+  async function carregarHospitais() {
+    const grid = document.getElementById('hospitalGrid');
+    try {
+      hospitaisDisponiveis = await apiGet('/hospitais');
+      if (!hospitaisDisponiveis.length) hospitaisDisponiveis = HOSPITAIS_MOCK;
+    } catch {
+      hospitaisDisponiveis = HOSPITAIS_MOCK;
+    }
+
+    grid.innerHTML = hospitaisDisponiveis.map(h => `
+      <button class="spec-btn hospital-option" type="button" data-hospital-id="${h.id}" data-hospital-nome="${h.nome}">
+        <span style="color:#1565c0"><i class="fa-solid fa-hospital"></i></span>
+        <span>${h.nome}</span>
+        <small style="display:block;width:100%;font-size:0.75rem;color:#718096;margin-top:4px">${h.municipio || 'Luanda'}</small>
+      </button>
+    `).join('');
+
+    document.querySelectorAll('.hospital-option').forEach(btn => {
+      btn.addEventListener('click', async function () {
+        document.querySelectorAll('.hospital-option').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        resetAfterHospitalChange();
+        sel.hospitalId = this.dataset.hospitalId;
+        sel.hospitalNome = this.dataset.hospitalNome;
+        setSummary('sum-hospital', sel.hospitalNome);
+        document.getElementById('specialtyWrap')?.classList.remove('hidden');
+        await carregarEspecialidades();
+      });
+    });
+
+    if (preHospitalId) {
+      const target = document.querySelector(`.hospital-option[data-hospital-id="${preHospitalId}"]`);
+      if (target) target.click();
+    }
+  }
+
   async function carregarEspecialidades() {
     const grid = document.getElementById('specialtyGrid');
+    if (!sel.hospitalId) {
+      grid.innerHTML = '<p style="color:#718096">Selecione um hospital para ver as especialidades.</p>';
+      return;
+    }
     try {
-      const endpoint = preHospitalId
-        ? `/hospitais/${preHospitalId}/especialidades`
+      const endpoint = sel.hospitalId
+        ? `/hospitais/${sel.hospitalId}/especialidades`
         : '/especialidades';
       const list = await apiGet(endpoint);
       if (!list.length) { grid.innerHTML = '<p style="color:#718096">Nenhuma especialidade disponível.</p>'; return; }
@@ -113,9 +192,9 @@ if (document.getElementById('specialtyGrid')) {
         const ic = SPEC_ICONS[e.nome] || { icon: 'fa-stethoscope', color: '#1565c0' };
         return `<button class="spec-btn" type="button" data-spec-nome="${e.nome}" data-spec-id="${e.id}"><span style="color:${ic.color}"><i class="fa-solid ${ic.icon}"></i></span><span>${e.nome}</span></button>`;
       }).join('');
-      document.querySelectorAll('.spec-btn').forEach(btn => {
+      grid.querySelectorAll('.spec-btn').forEach(btn => {
         btn.addEventListener('click', function () {
-          document.querySelectorAll('.spec-btn').forEach(b => b.classList.remove('selected'));
+          grid.querySelectorAll('.spec-btn').forEach(b => b.classList.remove('selected'));
           this.classList.add('selected');
           sel.specNome = this.dataset.specNome; sel.specId = this.dataset.specId;
           document.getElementById('sum-spec').textContent = sel.specNome;
@@ -129,7 +208,25 @@ if (document.getElementById('specialtyGrid')) {
         if (svc) document.querySelectorAll('.spec-btn').forEach(btn => { if (btn.dataset.specNome.toLowerCase()===svc.toLowerCase()) btn.click(); });
       }
     } catch(err) {
-      grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;text-align:center;color:#e53935;font-size:0.88rem"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar especialidades. Verifique se o servidor está a correr em <strong>localhost:3000</strong>.</div>`;
+      const hospitalMock = hospitaisDisponiveis.find(h => String(h.id) === String(sel.hospitalId));
+      const fallback = hospitalMock?.especialidades || [];
+      if (fallback.length) {
+        grid.innerHTML = fallback.map((nome, idx) => {
+          const ic = SPEC_ICONS[nome] || { icon: 'fa-stethoscope', color: '#1565c0' };
+          return `<button class="spec-btn" type="button" data-spec-nome="${nome}" data-spec-id="${1000 + idx}"><span style="color:${ic.color}"><i class="fa-solid ${ic.icon}"></i></span><span>${nome}</span></button>`;
+        }).join('');
+        grid.querySelectorAll('.spec-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            grid.querySelectorAll('.spec-btn').forEach(b => b.classList.remove('selected'));
+            this.classList.add('selected');
+            sel.specNome = this.dataset.specNome; sel.specId = this.dataset.specId;
+            document.getElementById('sum-spec').textContent = sel.specNome;
+            document.getElementById('step1Next').disabled = false;
+          });
+        });
+        return;
+      }
+      grid.innerHTML = `<div style="grid-column:1/-1;padding:20px;text-align:center;color:#e53935;font-size:0.88rem"><i class="fa-solid fa-circle-exclamation"></i> Erro ao carregar especialidades. Verifique se o servidor está a correr.</div>`;
     }
   }
 
@@ -139,16 +236,39 @@ if (document.getElementById('specialtyGrid')) {
     const selEl = document.getElementById('medicoSelect');
     selEl.innerHTML = '<option value="">A carregar médicos...</option>';
     try {
-      const endpoint = (preHospitalId && sel.specId)
-        ? `/hospitais/${preHospitalId}/medicos?especialidade_id=${sel.specId}`
+      const endpoint = (sel.hospitalId && sel.specId)
+        ? `/hospitais/${sel.hospitalId}/medicos?especialidade_id=${sel.specId}`
         : `/medicos?especialidade=${encodeURIComponent(sel.specNome)}`;
       const medicos = await apiGet(endpoint);
-      selEl.innerHTML = '<option value="">Sem preferência (primeiro disponível)</option>';
+      if (!medicos.length) {
+        selEl.innerHTML = '<option value="">Sem médicos disponíveis neste hospital</option>';
+        sel.medicoId = null;
+        sel.medicoNome = null;
+        document.getElementById('sum-doc').textContent = '---';
+        checkStep2();
+        return;
+      }
+      selEl.innerHTML = `<option value="${medicos[0].id}">Primeiro disponível (${medicos[0].titulo} ${medicos[0].nome})</option>`;
       medicos.forEach(m => { selEl.innerHTML += `<option value="${m.id}">${m.titulo} ${m.nome}</option>`; });
-    } catch { selEl.innerHTML = '<option value="">Sem preferência</option>'; }
+      sel.medicoId = selEl.value;
+      sel.medicoNome = selEl.options[selEl.selectedIndex].text;
+      document.getElementById('sum-doc').textContent = sel.medicoNome;
+      checkStep2();
+    } catch {
+      selEl.innerHTML = '<option value="">Não foi possível carregar médicos</option>';
+      sel.medicoId = null;
+      sel.medicoNome = null;
+      document.getElementById('sum-doc').textContent = '---';
+      checkStep2();
+    }
   }
-
   document.getElementById('medicoSelect').addEventListener('change', function () {
+    sel.medicoId = this.value || null;
+    sel.medicoNome = this.value ? this.options[this.selectedIndex].text : null;
+    document.getElementById('sum-doc').textContent = sel.medicoNome || '---';
+    sel.time = null;
+    document.getElementById('sum-time').textContent = '---';
+    checkStep2();
     const data = document.getElementById('dataConsulta').value;
     if (data && this.value) carregarSlots(this.value, data);
   });
@@ -163,7 +283,8 @@ if (document.getElementById('specialtyGrid')) {
     document.getElementById('sum-date').textContent = pick.toLocaleDateString('pt-AO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
     checkStep2();
     const medicoId = document.getElementById('medicoSelect').value;
-    if (medicoId) await carregarSlots(medicoId, this.value); else mostrarSlotsPadrao();
+    if (medicoId) await carregarSlots(medicoId, this.value);
+    else document.getElementById('timeslots').innerHTML = '<p style="font-size:0.86rem;color:#718096;padding:8px 0"><i class="fa-solid fa-user-doctor"></i> Escolha um médico para ver os horários.</p>';
   });
 
   async function carregarSlots(medicoId, data) {
@@ -209,7 +330,7 @@ if (document.getElementById('specialtyGrid')) {
     });
   });
 
-  function checkStep2() { document.getElementById('step2Next').disabled=!(sel.date&&sel.time); }
+  function checkStep2() { document.getElementById('step2Next').disabled=!(sel.date&&sel.time&&document.getElementById('medicoSelect').value); }
 
   document.getElementById('step2Back').addEventListener('click',()=>goToStep(1));
   document.getElementById('step2Next').addEventListener('click',()=>{
@@ -244,7 +365,7 @@ if (document.getElementById('specialtyGrid')) {
         paciente_nome:nome, paciente_email:email||null, paciente_telefone:tel,
         paciente_nascimento:document.getElementById('pNasc').value||null,
         paciente_bi:document.getElementById('pBI').value||null,
-        medico_id:sel.medicoId?parseInt(sel.medicoId):1,
+        medico_id:sel.medicoId?parseInt(sel.medicoId):parseInt(document.getElementById('medicoSelect').value),
         especialidade_id:parseInt(sel.specId),
         hospital_id:sel.hospitalId?parseInt(sel.hospitalId):null,
         data_hora:`${sel.date}T${sel.time}:00`, tipo:'presencial',
@@ -276,7 +397,7 @@ if (document.getElementById('specialtyGrid')) {
 
   const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
   document.getElementById('dataConsulta').min=tomorrow.toISOString().split('T')[0];
-  carregarEspecialidades();
+  carregarHospitais();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

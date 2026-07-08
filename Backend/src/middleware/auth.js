@@ -1,5 +1,13 @@
 const jwt = require('jsonwebtoken');
 
+function getJwtSecret() {
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET obrigatorio em producao.');
+  }
+  return 'dev-secret-change-me';
+}
+
 // Verifica token JWT
 function autenticar(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -8,7 +16,7 @@ function autenticar(req, res, next) {
   }
   const token = authHeader.split(' ')[1];
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, getJwtSecret());
     req.utilizador = payload;
     next();
   } catch {
@@ -26,4 +34,4 @@ function autorizar(...roles) {
   };
 }
 
-module.exports = { autenticar, autorizar };
+module.exports = { autenticar, autorizar, getJwtSecret };

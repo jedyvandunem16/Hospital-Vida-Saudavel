@@ -6,10 +6,6 @@ async function listar(req, res, next) {
     const { q } = req.query; // pesquisa por nome/telefone
     let sql = `SELECT id, nome, email, telefone, data_nascimento, genero, bi, criado_em FROM pacientes WHERE 1=1`;
     const params = [];
-    if (q) {
-      sql += ` AND (nome LIKE ? OR telefone LIKE ? OR bi LIKE ?)`;
-      // handled below
-    }
     // telefone exact match
     const { telefone } = req.query;
     if (telefone && !q) {

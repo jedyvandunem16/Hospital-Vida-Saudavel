@@ -12,7 +12,7 @@ const CONFIG = Object.freeze({
 
   // ── API ──────────────────────────────────────────────────────────────────
   // TODO: em produção substituir pelo URL real do servidor
-  API_URL: 'http://localhost:3000/api',
+  API_URL: 'http://localhost:3003/api',
 
   // ── Identidade do hospital ───────────────────────────────────────────────
   // Nome canónico usado em todo o frontend

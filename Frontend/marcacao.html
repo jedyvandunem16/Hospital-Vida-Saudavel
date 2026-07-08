@@ -38,7 +38,7 @@
         <div class="booking-hero-text">
           <span class="section-tag">Agendamento Online</span>
           <h1>Marcar <em>Consulta</em></h1>
-          <p>Agende a sua consulta de forma rápida e fácil. Escolha a especialidade, o médico e o horário.</p>
+          <p>Agende a sua consulta de forma rápida e fácil. Escolha o hospital, a especialidade, o médico e o horário.</p>
           <div class="booking-info-pills">
             <span><i class="fa-solid fa-shield-halved"></i> Confirmação por Email</span>
             <span><i class="fa-solid fa-clock-rotate-left"></i> Cancelamento gratuito até 24h</span>
@@ -55,7 +55,7 @@
   <section class="booking-section">
     <div class="container">
       <div class="steps-bar">
-        <div class="step active" id="step-ind-1"><div class="step-num">1</div><span>Especialidade</span></div>
+        <div class="step active" id="step-ind-1"><div class="step-num">1</div><span>Hospital &amp; Especialidade</span></div>
         <div class="step-line"></div>
         <div class="step" id="step-ind-2"><div class="step-num">2</div><span>Médico &amp; Data</span></div>
         <div class="step-line"></div>
@@ -69,12 +69,22 @@
 
           <!-- PASSO 1 -->
           <div class="form-step active" id="step1">
-            <h2>Escolha a <em>especialidade</em></h2>
-            <p>Selecione a especialidade médica que necessita.</p>
-            <div class="specialty-grid" id="specialtyGrid">
+            <h2>Escolha o <em>hospital</em></h2>
+            <p>Selecione o hospital onde pretende ser atendido.</p>
+            <div class="specialty-grid" id="hospitalGrid">
+              <div style="grid-column:1/-1;text-align:center;padding:32px;color:#718096">
+                <i class="fa-solid fa-circle-notch fa-spin" style="font-size:1.5rem;color:#1565c0"></i>
+                <p style="margin-top:10px;font-size:0.88rem">A carregar hospitais...</p>
+              </div>
+            </div>
+            <div id="specialtyWrap" class="hidden" style="margin-top:28px">
+              <h2 style="font-size:1.45rem">Escolha a <em>especialidade</em></h2>
+              <p>Especialidades disponiveis no hospital selecionado.</p>
+              <div class="specialty-grid" id="specialtyGrid">
               <div style="grid-column:1/-1;text-align:center;padding:32px;color:#718096">
                 <i class="fa-solid fa-circle-notch fa-spin" style="font-size:1.5rem;color:#1565c0"></i>
                 <p style="margin-top:10px;font-size:0.88rem">A carregar especialidades...</p>
+              </div>
               </div>
             </div>
             <div class="step-actions">
@@ -154,7 +164,7 @@
             <div class="form-group checkbox-group">
               <label class="checkbox-label">
                 <input type="checkbox" id="bookPriv"/>
-                <span>Aceito a <a href="#">Política de Privacidade</a> *</span>
+                <span>Aceito a <a href="privacidade.html">Política de Privacidade</a> *</span>
               </label>
               <span class="field-error" id="bookPrivErr"></span>
             </div>
@@ -189,6 +199,7 @@
         <!-- SIDEBAR -->
         <div class="booking-sidebar">
           <div class="booking-summary-card">
+            <div class="summary-row"><span>Hospital:</span><strong id="sum-hospital">&mdash;</strong></div>
             <h3><i class="fa-solid fa-calendar-check"></i> Resumo da Marcação</h3>
             <div class="summary-row"><span>Especialidade:</span><strong id="sum-spec">—</strong></div>
             <div class="summary-row"><span>Médico:</span><strong id="sum-doc">—</strong></div>
@@ -207,6 +218,7 @@
 
   <footer class="footer" id="footer-main"></footer>
   <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
+  <script src="config.js"></script>
   <script src="js/main.js"></script>
   <script src="js/api.js"></script>
 </body>

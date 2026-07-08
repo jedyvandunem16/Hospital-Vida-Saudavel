@@ -72,9 +72,9 @@ function buildFooterHTML() {
     <div class="container footer-bottom-inner">
       <p>© ${new Date().getFullYear()} ${nome} – Todos os direitos reservados</p>
       <div class="footer-bottom-links">
-        <a href="#">Política de Privacidade</a>
+        <a href="privacidade.html">Política de Privacidade</a>
         <span>·</span>
-        <a href="#">Termos de Uso</a>
+        <a href="termos.html">Termos de Uso</a>
         <span>·</span>
         <a href="contacto.html">Reclamações</a>
       </div>

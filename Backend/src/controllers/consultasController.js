@@ -1,4 +1,4 @@
-const { pool }  = require('../config/database');
+﻿const { pool }  = require('../config/database');
 const { enviarEmail, emailConfirmacaoConsulta } = require('../utils/email');
 
 // GET /api/consultas?pagina=1&limite=50  (admin/recepcao vê tudo; médico vê só as suas)
@@ -92,10 +92,24 @@ async function criar(req, res, next) {
       // Dados do paciente
       paciente_nome, paciente_email, paciente_telefone, paciente_nascimento, paciente_bi,
       // Dados da consulta
-      medico_id, especialidade_id, data_hora, tipo = 'presencial', motivo,
+      medico_id, especialidade_id, hospital_id, data_hora, tipo = 'presencial', motivo,
       duracao_min = 30, // duração padrão em minutos; pode ser enviada pelo frontend
     } = req.body;
-
+    const [[vinculo]] = await pool.execute(
+      `SELECT m.id
+       FROM medicos m
+       JOIN hospital_medicos hm ON hm.medico_id = m.id
+       WHERE m.id = ?
+         AND m.especialidade_id = ?
+         AND hm.hospital_id = ?
+         AND m.ativo = 1`,
+      [medico_id, especialidade_id, hospital_id]
+    );
+    if (!vinculo) {
+      return res.status(422).json({
+        erro: 'O médico selecionado não atende esta especialidade neste hospital.',
+      });
+    }
     // ── [MÉDIA 1] Verificar conflito por INTERVALO, não por hora exacta ─────────
     // Uma nova consulta de `duracao_min` minutos a partir de `data_hora` conflitua
     // com qualquer outra consulta do médico cuja janela temporal se sobreponha.
@@ -156,9 +170,9 @@ async function criar(req, res, next) {
 
     // ── Criar consulta ────────────────────────────────────────────────────────
     const [result] = await pool.execute(
-      `INSERT INTO consultas (paciente_id, medico_id, especialidade_id, data_hora, duracao_min, tipo, motivo, estado)
-       VALUES (?, ?, ?, ?, ?, ?, ?, 'pendente')`,
-      [pacienteId, medico_id, especialidade_id, data_hora, duracao_min, tipo, motivo || null]
+      `INSERT INTO consultas (paciente_id, medico_id, especialidade_id, hospital_id, data_hora, duracao_min, tipo, motivo, estado)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendente')`,
+      [pacienteId, medico_id, especialidade_id, hospital_id || null, data_hora, duracao_min, tipo, motivo || null]
     );
 
     const consultaId = result.insertId;

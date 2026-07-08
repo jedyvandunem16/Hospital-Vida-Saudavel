@@ -1,6 +1,7 @@
 const bcrypt  = require('bcryptjs');
 const jwt     = require('jsonwebtoken');
 const { pool } = require('../config/database');
+const { getJwtSecret } = require('../middleware/auth');
 
 // POST /api/auth/login
 async function login(req, res, next) {
@@ -22,7 +23,7 @@ async function login(req, res, next) {
 
     const token = jwt.sign(
       { id: user.id, nome: user.nome, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 

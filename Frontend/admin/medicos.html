@@ -1,139 +1,125 @@
-/**
- * medicos.js — Carregamento dinâmico de médicos da API
- * Preserva 100% o layout existente, substitui apenas os dados
- */
-
-const STAR_FULL  = '<i class="fa-solid fa-star"></i>';
-const STAR_HALF  = '<i class="fa-solid fa-star-half-stroke"></i>';
-const STAR_EMPTY = '<i class="fa-regular fa-star"></i>';
-
-function renderStars(rating) {
-  let stars = '';
-  for (let i = 1; i <= 5; i++) {
-    if (rating >= i)         stars += STAR_FULL;
-    else if (rating >= i - 0.5) stars += STAR_HALF;
-    else                     stars += STAR_EMPTY;
-  }
-  return stars;
-}
-
-// Fotos de fallback por género
-const FOTOS_FALLBACK = [
-  'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80',
-  'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80',
-  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400&q=80',
-  'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&q=80',
-  'https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=400&q=80',
-];
-
-let todosMedicos = [];
-
-function slugify(str) {
-  return str.toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-}
-
-function renderMedicos(lista) {
-  const grid      = document.getElementById('doctorsGrid');
-  const noResults = document.getElementById('noResults');
-
-  if (!lista.length) {
-    grid.style.display = 'none';
-    noResults.classList.remove('hidden');
-    return;
-  }
-
-  noResults.classList.add('hidden');
-  grid.style.display = '';
-
-  grid.innerHTML = lista.map((m, idx) => {
-    const foto     = m.foto_url || FOTOS_FALLBACK[idx % FOTOS_FALLBACK.length];
-    const rating   = 4.7 + Math.round(Math.random() * 3) * 0.1; // 4.7–5.0 simulado
-    const reviews  = 50 + Math.floor(Math.random() * 100);
-    const espSlug  = slugify(m.especialidade || '');
-
-    return `
-      <div class="doc-full-card" data-specialty="${espSlug}">
-        <div class="doc-full-img">
-          <img src="${foto}" alt="${m.titulo} ${m.nome}" loading="lazy"
-               onerror="this.src='${FOTOS_FALLBACK[0]}'"/>
-          <span class="doc-badge">${m.especialidade || ''}</span>
-        </div>
-        <div class="doc-full-info">
-          <h3>${m.titulo || 'Dr.'} ${m.nome}</h3>
-          <p class="doc-specialty">${m.especialidade || ''}</p>
-          <p class="doc-bio">${m.bio || 'Médico especialista com vasta experiência clínica ao serviço dos pacientes de Luanda.'}</p>
-          <div class="doc-meta">
-            ${m.formacao ? `<span><i class="fa-solid fa-graduation-cap"></i> ${m.formacao}</span>` : ''}
-            ${m.anos_experiencia ? `<span><i class="fa-solid fa-clock"></i> ${m.anos_experiencia} anos exp.</span>` : ''}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Médicos — Painel Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main-content">
+    <header class="topbar" id="topbar"></header>
+    <main class="content-area">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title"><i class="fa-solid fa-user-doctor" style="color:var(--blue)"></i> Médicos</span>
+          <div class="card-actions">
+            <div class="search-input">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="searchInput" placeholder="Pesquisar médico ou especialidade..."/>
+            </div>
+            <select class="filter-select" id="filtroEspecialidade">
+              <option value="">Todas as especialidades</option>
+            </select>
           </div>
-          <div class="doc-rating">
-            ${renderStars(rating)}
-            <span>${rating.toFixed(1)} (${reviews} avaliações)</span>
-          </div>
-          <a href="marcacao.html?medico_id=${m.id}&servico=${encodeURIComponent(m.especialidade || '')}"
-             class="btn-primary sm">Marcar Consulta</a>
         </div>
-      </div>`;
-  }).join('');
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Médico</th>
+                <th>Especialidade</th>
+                <th>Experiência</th>
+                <th>CRM</th>
+                <th>Estado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="medicosBody">
+              <tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-circle-notch fa-spin"></i> A carregar...</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
 
-  // Re-observar para animações de scroll
-  document.querySelectorAll('.doc-full-card').forEach((c, i) => {
-    setTimeout(() => c.classList.add('animate-in'), i * 80);
-  });
-}
+  <script src="../config.js"></script>
+  <script src="admin.js"></script>
+  <script>
+    buildSidebar('medicos');
+    buildTopbar('Médicos');
 
-function filtrar(especialidade) {
-  const lista = especialidade === 'all'
-    ? todosMedicos
-    : todosMedicos.filter(m => slugify(m.especialidade || '') === especialidade);
-  renderMedicos(lista);
-}
+    let todosMedicos = [];
 
-async function carregarEspecialidadesBar() {
-  try {
-    const esps = await apiGet('/especialidades');
-    const bar  = document.getElementById('filterBar');
-    esps.forEach(e => {
-      const btn = document.createElement('button');
-      btn.className = 'filter-btn';
-      btn.dataset.filter = slugify(e.nome);
-      btn.textContent = e.nome;
-      bar.appendChild(btn);
-    });
-  } catch { /* mantém só o botão "Todos" */ }
-
-  // Bind filtros
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      filtrar(this.dataset.filter);
-    });
-  });
-}
-
-(async function init() {
-  const loading = document.getElementById('medicos-loading');
-
-  try {
-    await carregarEspecialidadesBar();
-    todosMedicos = await apiGet('/medicos');
-    loading.style.display = 'none';
-    renderMedicos(todosMedicos);
-
-    // Filtro vindo por URL ?especialidade=Cardiologia
-    const urlEsp = new URLSearchParams(window.location.search).get('especialidade');
-    if (urlEsp) {
-      const slug = slugify(urlEsp);
-      const btn  = document.querySelector(`.filter-btn[data-filter="${slug}"]`);
-      if (btn) btn.click();
+    function fotoAdmin(url) {
+      if (!url) return '../img/medico_4.jpg';
+      return url.replace(/^img\//, '../img/');
     }
 
-  } catch {
-    loading.innerHTML = `
-      <i class="fa-solid fa-circle-exclamation" style="font-size:1.8rem;color:#e53935"></i>
-      <p style="margin-top:12px;color:#e53935">Erro ao carregar médicos. Verifique se o servidor está a correr.</p>`;
-  }
-})();
+    function renderMedicos(lista) {
+      const body = document.getElementById('medicosBody');
+      if (!lista.length) {
+        body.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-user-doctor"></i><p>Nenhum médico encontrado.</p></div></td></tr>';
+        return;
+      }
+
+      body.innerHTML = lista.map(m => `
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:12px">
+              <img src="${fotoAdmin(m.foto_url)}" alt="${escapeHtml(m.nome)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover" onerror="this.src='../img/medico_4.jpg'"/>
+              <div>
+                <strong>${escapeHtml(m.titulo || 'Dr.')} ${escapeHtml(m.nome)}</strong>
+                <div style="font-size:0.78rem;color:var(--text-3)">ID #${m.id}</div>
+              </div>
+            </div>
+          </td>
+          <td>${escapeHtml(m.especialidade || '-')}</td>
+          <td>${m.anos_experiencia || 0} anos</td>
+          <td>${escapeHtml(m.crm || '-')}</td>
+          <td><span class="badge ${m.ativo ? 'badge-confirmada' : 'badge-cancelada'}">${m.ativo ? 'Activo' : 'Inactivo'}</span></td>
+          <td>
+            <a href="../marcacao.html?medico_id=${m.id}&servico=${encodeURIComponent(m.especialidade || '')}" target="_blank" class="btn btn-sm btn-outline">
+              <i class="fa-solid fa-calendar-plus"></i> Marcar
+            </a>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function aplicarFiltros() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const esp = document.getElementById('filtroEspecialidade').value;
+      const lista = todosMedicos.filter(m => {
+        const texto = `${m.nome || ''} ${m.especialidade || ''} ${m.crm || ''}`.toLowerCase();
+        return (!q || texto.includes(q)) && (!esp || m.especialidade === esp);
+      });
+      renderMedicos(lista);
+    }
+
+    async function carregar() {
+      try {
+        const [medicos, especialidades] = await Promise.all([
+          api('GET', '/medicos', null, true),
+          api('GET', '/especialidades', null, true),
+        ]);
+        todosMedicos = medicos;
+        const filtro = document.getElementById('filtroEspecialidade');
+        filtro.innerHTML += especialidades.map(e => `<option value="${escapeHtml(e.nome)}">${escapeHtml(e.nome)}</option>`).join('');
+        renderMedicos(todosMedicos);
+      } catch (err) {
+        toast('Erro ao carregar médicos: ' + err.message, 'error');
+        document.getElementById('medicosBody').innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Erro ao carregar médicos.</p></div></td></tr>';
+      }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtroEspecialidade').addEventListener('change', aplicarFiltros);
+    carregar();
+  </script>
+</body>
+</html>

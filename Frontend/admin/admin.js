@@ -12,7 +12,7 @@
 // Fallback defensivo caso config.js não tenha sido incluído.
 const API_URL = (typeof CONFIG !== 'undefined' && CONFIG.API_URL)
   ? CONFIG.API_URL
-  : 'http://localhost:3000/api';
+  : 'http://localhost:3001/api';
 
 // ── Sanitização ───────────────────────────────────────────────────────────────
 // Escapa HTML para evitar XSS ao inserir dados do servidor no DOM via innerHTML.
@@ -191,7 +191,7 @@ function buildTopbar(title) {
     </div>
     <div class="topbar-right">
       <span class="topbar-greeting">${greeting}, <strong>${escapeHtml(user?.nome?.split(' ')[0] || '')}</strong></span>
-      <button class="topbar-btn" onclick="window.location.href='../login.html'">
+      <button class="topbar-btn" onclick="logout()">
         <i class="fa-solid fa-right-from-bracket"></i>
       </button>
     </div>

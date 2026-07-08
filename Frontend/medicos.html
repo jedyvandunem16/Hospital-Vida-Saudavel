@@ -2,14 +2,35 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Médicos — Hospital Vida Saudável</title>
+  <meta name="description" content="Encontre médicos especialistas em Cardiologia, Pediatria, Ortopedia e mais. Agende sua consulta online no Hospital Vida Saudável." />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Médicos — Hospital Vida Saudável" />
+  <meta property="og:description" content="Encontre médicos especialistas em Cardiologia, Pediatria, Ortopedia e mais. Agende sua consulta online no Hospital Vida Saudável." />
+  <meta property="og:image" content="img/medico_4.jpg" />
+  <meta property="og:url" content="http://localhost:3000/medicos.html" />
+  <meta property="og:type" content="website" />
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MedicalOrganization",
+    "name": "Hospital Vida Saudável",
+    "url": "http://localhost:3000",
+    "logo": "img/logo.png",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Luanda",
+      "addressCountry": "AO"
+    }
+  }
+  </script>
 </head>
 <body>
-
+  <a href="#mainContent" class="skip-link">Ir para o conteúdo principal</a>
   <nav class="navbar" id="navbar">
     <div class="nav-container">
       <a href="index.html" class="logo">
@@ -27,6 +48,7 @@
       <div class="nav-actions">
         <a href="tel:+244900000000" class="nav-phone"><i class="fa-solid fa-phone"></i> +244 900 000 000</a>
         <a href="marcacao.html" class="btn-consulta">Marcar Consulta</a>
+        <button id="themeToggle" class="btn-ghost" aria-label="Alternar tema claro/escuro"><i class="fa-solid fa-moon"></i></button>
       </div>
       <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
     </div>
@@ -34,11 +56,13 @@
 
   <section class="page-hero">
     <div class="page-hero-bg">
-      <img src="img/medico.avif" alt="Médicos"/>
+      <img src="img/medico_4.jpg" alt="Médicos" />
       <div class="page-hero-overlay"></div>
     </div>
-    <div class="page-hero-content container">
-      <div class="breadcrumb"><a href="index.html">Início</a> <i class="fa-solid fa-chevron-right"></i> <span>Médicos</span></div>
+    <div class="page-hero-content container" id="mainContent">
+      <div class="breadcrumb">
+        <a href="index.html">Início</a> <i class="fa-solid fa-chevron-right"></i> <span>Médicos</span>
+      </div>
       <h1>A nossa <em>equipa médica</em></h1>
       <p>Mais de 40 especialistas dedicados à sua saúde e bem-estar.</p>
     </div>
@@ -48,7 +72,8 @@
   <section class="filter-section">
     <div class="container">
       <div class="filter-bar" id="filterBar">
-        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn active" data-filter="all" aria-pressed="true">Todos</button>
+        <!-- JS will inject other specialty buttons -->
       </div>
     </div>
   </section>
@@ -56,118 +81,11 @@
   <!-- DOCTORS GRID -->
   <section class="section-pad pt-low">
     <div class="container">
-
-      <div class="doctors-full-grid" id="doctorsGrid">
-
-        <div class="doc-full-card" data-specialty="cardiologia">
-          <div class="doc-full-img">
-            <img src="img/João.avif" alt="Dr. João Silva"/>
-            <span class="doc-badge">Cardiologia</span>
-          </div>
-          <div class="doc-full-info">
-            <h3>Dr. João Silva</h3>
-            <p class="doc-specialty">Cardiologista</p>
-            <p class="doc-bio">Especialista em cardiologia intervencionista com mais de 15 anos de experiência. Formado na Universidade de Lisboa, com especialização em Porto Alegre, Brasil.</p>
-            <div class="doc-meta">
-              <span><i class="fa-solid fa-graduation-cap"></i> Univ. de Lisboa</span>
-              <span><i class="fa-solid fa-clock"></i> 15 anos exp.</span>
-            </div>
-            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0 (128 avaliações)</span></div>
-            <a href="marcacao.html?medico=joao-silva" class="btn-primary sm">Marcar Consulta</a>
-          </div>
-        </div>
-
-        <div class="doc-full-card" data-specialty="pediatria">
-          <div class="doc-full-img">
-            <img src="img/Ana.avif" alt="Dra. Ana Costa"/>
-            <span class="doc-badge">Pediatria</span>
-          </div>
-          <div class="doc-full-info">
-            <h3>Dra. Ana Costa</h3>
-            <p class="doc-specialty">Pediatra</p>
-            <p class="doc-bio">Pediatra com dedicação especial a crianças com necessidades de saúde complexas. Formada na Universidade do Porto, com especialização em Pediatria em Londres.</p>
-            <div class="doc-meta">
-              <span><i class="fa-solid fa-graduation-cap"></i> Univ. do Porto</span>
-              <span><i class="fa-solid fa-clock"></i> 12 anos exp.</span>
-            </div>
-            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0 (96 avaliações)</span></div>
-            <a href="marcacao.html?medico=ana-costa" class="btn-primary sm">Marcar Consulta</a>
-          </div>
-        </div>
-
-        <div class="doc-full-card" data-specialty="geral">
-          <div class="doc-full-img">
-            <img src="img/pedro.avif" alt="Dr. Pedro Santos"/>
-            <span class="doc-badge">Clínica Geral</span>
-          </div>
-          <div class="doc-full-info">
-            <h3>Dr. Pedro Santos</h3>
-            <p class="doc-specialty">Médico de Clínica Geral</p>
-            <p class="doc-bio">Médico generalista com vasta experiência em medicina preventiva e acompanhamento de doenças crónicas. Atende pacientes de todas as idades.</p>
-            <div class="doc-meta">
-              <span><i class="fa-solid fa-graduation-cap"></i> FMUAN, Angola</span>
-              <span><i class="fa-solid fa-clock"></i> 10 anos exp.</span>
-            </div>
-            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.8 (74 avaliações)</span></div>
-            <a href="marcacao.html?medico=pedro-santos" class="btn-primary sm">Marcar Consulta</a>
-          </div>
-        </div>
-
-        <div class="doc-full-card" data-specialty="ortopedia">
-          <div class="doc-full-img">
-            <img src="img/Emanuel.avif" alt="Dr. Manuel Lopes"/>
-            <span class="doc-badge">Ortopedia</span>
-          </div>
-          <div class="doc-full-info">
-            <h3>Dr. Manuel Lopes</h3>
-            <p class="doc-specialty">Ortopedista</p>
-            <p class="doc-bio">Especialista em cirurgia ortopédica e medicina desportiva. Formado na Universidade de Coimbra, com Fellowship em cirurgia da coluna nos EUA.</p>
-            <div class="doc-meta">
-              <span><i class="fa-solid fa-graduation-cap"></i> Univ. Coimbra</span>
-              <span><i class="fa-solid fa-clock"></i> 18 anos exp.</span>
-            </div>
-            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>4.9 (112 avaliações)</span></div>
-            <a href="marcacao.html?medico=manuel-lopes" class="btn-primary sm">Marcar Consulta</a>
-          </div>
-        </div>
-
-        <div class="doc-full-card" data-specialty="neurologia">
-          <div class="doc-full-img">
-            <img src="img/sofia.avif" alt="Dra. Sofia Neves"/>
-            <span class="doc-badge">Neurologia</span>
-          </div>
-          <div class="doc-full-info">
-            <h3>Dra. Sofia Neves</h3>
-            <p class="doc-specialty">Neurologista</p>
-            <p class="doc-bio">Especialista em neurologia clínica e neurofisiologia. Com formação em Barcelona e experiência internacional, trata desde enxaquecas a doenças neurodegenerativas.</p>
-            <div class="doc-meta">
-              <span><i class="fa-solid fa-graduation-cap"></i> Univ. Barcelona</span>
-              <span><i class="fa-solid fa-clock"></i> 14 anos exp.</span>
-            </div>
-            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><span>5.0 (88 avaliações)</span></div>
-            <a href="marcacao.html?medico=sofia-neves" class="btn-primary sm">Marcar Consulta</a>
-          </div>
-        </div>
-
-        <div class="doc-full-card" data-specialty="laboratorio">
-          <div class="doc-full-img">
-            <img src="img/rui.avif" alt="Dr. Rui Cardoso"/>
-            <span class="doc-badge">Laboratório</span>
-          </div>
-          <div class="doc-full-info">
-            <h3>Dr. Rui Cardoso</h3>
-            <p class="doc-specialty">Patologista Clínico</p>
-            <p class="doc-bio">Responsável pelo laboratório de análises clínicas. Especialista em medicina laboratorial com experiência em diagnóstico molecular e microbiologia clínica.</p>
-            <div class="doc-meta">
-              <span><i class="fa-solid fa-graduation-cap"></i> FMUL, Lisboa</span>
-              <span><i class="fa-solid fa-clock"></i> 20 anos exp.</span>
-            </div>
-            <div class="doc-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i><span>4.9 (56 avaliações)</span></div>
-            <a href="marcacao.html?medico=rui-cardoso" class="btn-primary sm">Marcar Consulta</a>
-          </div>
-        </div>
-
+      <div id="skeletonContainer" class="hidden"></div>
+      <div class="doctors-full-grid" id="doctorsGrid" role="region" aria-labelledby="doctorsGrid">
+        <!-- Doctor cards injected by JS -->
       </div>
+      <div class="pagination" id="pagination"></div>
       <p class="no-results hidden" id="noResults">Nenhum médico encontrado nesta especialidade.</p>
     </div>
   </section>
@@ -187,9 +105,12 @@
     </div>
   </section>
 
-  <footer class="footer" id="footer-main"></footer>
+  <footer class="footer" id="footer-main">
+    <!-- Footer content omitted for brevity -->
+  </footer>
   <a href="#" class="back-to-top" id="backTop"><i class="fa-solid fa-arrow-up"></i></a>
- <script src="js/main.js"></script>
+  <script src="js/medicos-helpers.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/api.js"></script>
   <script src="js/medicos.js"></script>
 </body>
